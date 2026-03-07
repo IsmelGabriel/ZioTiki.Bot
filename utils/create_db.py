@@ -1,16 +1,5 @@
-import os
+from config import DB_CONFIG
 import psycopg2
-from dotenv import load_dotenv
-
-load_dotenv()
-
-DB_CONFIG = {
-    "dbname": os.getenv("dbname"),
-    "user": os.getenv("user"),
-    "password": os.getenv("password"),
-    "host": os.getenv("host"),
-    "port": os.getenv("port", 5432)
-}
 
 def create_tables():
     """Crea las tablas necesarias en la base de datos si no existen."""
@@ -71,4 +60,7 @@ def create_tables():
     except Exception as e:
         print(f"[ERROR] No se pudieron crear las tablas: {e}")
 
-create_tables()
+
+# Solo ejecutar si se corre directamente
+if __name__ == "__main__":
+    create_tables()

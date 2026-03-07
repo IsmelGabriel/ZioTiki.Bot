@@ -1,84 +1,18 @@
-from psycopg2.extras import RealDictCursor
-from utils.db import conectar
-from flask import Flask, render_template, jsonify
-from utils.bot_status import bot_status
+"""
+Servidor de desarrollo — ejecutar directamente con:
+    python webserver.py
+
+Para producción usar wsgi.py con Gunicorn:
+    gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 1
+"""
+
+from config import FLASK_HOST, FLASK_PORT, DEBUG
 from bot import run_bot_thread
+from web import create_app
 
 run_bot_thread()
 
-app = Flask(__name__)
+app = create_app()
 
-def get_error_logs():
-    """Obtiene los últimos 10 errores registrados con más detalles."""
-    conn = conectar()
-    if not conn:
-        return []
-
-    try:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            # Intentar obtener todas las columnas disponibles
-            cur.execute(
-                """
-                SELECT
-                    server_id,
-                    user_id,
-                    error_type,
-                    error_message,
-                    created_at,
-                    CASE WHEN stack_trace IS NOT NULL THEN TRUE ELSE FALSE END as has_stack_trace
-                FROM error_logs
-                ORDER BY created_at DESC
-                LIMIT 10;
-                """
-            )
-            logs = cur.fetchall()
-            return logs if logs else []
-    except Exception as e:
-        print(f"[ERROR] No se pudieron obtener los logs de error: {e}")
-        # Fallback a columnas básicas si las nuevas no existen
-        try:
-            with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                cur.execute(
-                    "SELECT server_id, error_message, created_at FROM error_logs ORDER BY created_at DESC LIMIT 10;"
-                )
-                logs = cur.fetchall()
-                return logs if logs else []
-        except Exception as e2:
-            print(f"[ERROR] Fallback también falló: {e2}")
-            return []
-    finally:
-        conn.close()
-
-def get_lasts_prompt_update():
-    """Obtiene las últimas 5 actualizaciones de prompts."""
-    conn = conectar()
-    if not conn:
-        return []
-
-    try:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute(
-                "SELECT server_id, name, content, updated_at FROM prompts ORDER BY updated_at DESC LIMIT 5;"
-            )
-            prompts = cur.fetchall()
-            return prompts if prompts else []
-    except Exception as e:
-        print(f"[ERROR] No se pudo obtener la última actualización de prompt: {e}")
-        return []
-    finally:
-        conn.close()
-
-@app.route('/')
-def home():
-    error_logs = get_error_logs()
-    prompts_update = get_lasts_prompt_update()
-    return render_template("home.html", bot_status=bot_status, error_logs=error_logs, prompts=prompts_update)
-
-@app.route('/api/ping')
-def api_ping():
-    return jsonify({"ping": bot_status["ping"]})
-
-@app.route('/api/status')
-def api_status():
-    """Endpoint para obtener todo el estado del bot."""
-    return jsonify(bot_status)
+if __name__ == "__main__":
+    app.run(host=FLASK_HOST, port=FLASK_PORT, debug=DEBUG)

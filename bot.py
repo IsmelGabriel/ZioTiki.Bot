@@ -5,20 +5,12 @@ import logging
 import discord
 import asyncio
 from discord.ext import commands, tasks
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
-
-import webserver
+from config import DISCORD_TOKEN, TESTING_MODE
 from utils.logger_db import guardar_log
 from utils.ia import generate_response
 from utils.error_logs_db import log_command_error, log_ai_error
 from utils.bot_status import bot_status
-
-# Get token from os environment variable for security
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-TESTING_MODE = os.getenv("TESTING_MODE", "False").lower() == "true"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

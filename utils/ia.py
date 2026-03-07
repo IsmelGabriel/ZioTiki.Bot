@@ -1,13 +1,10 @@
-import os
-from dotenv import load_dotenv
 from openai import OpenAI
+from config import OPENAI_API_KEY, OPENAI_MODEL
 from utils.memory_db import save_message, get_history
 from utils.prompt_db import get_prompt
 
-load_dotenv()
+client = OpenAI(api_key=OPENAI_API_KEY)
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=openai_api_key)
 
 def generate_response(server_id: int, user_id: int, prompt: str) -> str:
     """Generates an AI response based on the user's history in the server."""
@@ -31,7 +28,7 @@ def generate_response(server_id: int, user_id: int, prompt: str) -> str:
 
     # Call the model
     response = client.chat.completions.create(
-        model="gpt-4.1-mini",
+        model=OPENAI_MODEL,
         messages=messages,
         max_tokens=200,
         temperature=0.7

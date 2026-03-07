@@ -1,26 +1,26 @@
-from discord import datetime
+from datetime import datetime
 from utils.db import conectar
 import traceback
 
 def log_error(error_message, server_id=None, user_id=None, error_type="Unknown", stack_trace=None):
     """
     Registra un error detallado en la base de datos.
-    
+
     Args:
         error_message (str): Mensaje de error descriptivo
         server_id (int): ID del servidor donde ocurrió el error
         user_id (int): ID del usuario que causó el error (opcional)
         error_type (str): Tipo de error (CommandError, DatabaseError, etc.)
         stack_trace (str): Stack trace completo del error (opcional)
-    
+
     Returns:
         bool: True si se guardó exitosamente, False en caso contrario
     """
     conn = conectar()
     if not conn:
         print("[ERROR] No se pudo conectar a la base de datos para registrar el error.")
-        return 
-    
+        return
+
     fecha_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     try:
@@ -31,7 +31,7 @@ def log_error(error_message, server_id=None, user_id=None, error_type="Unknown",
                 VALUES (%s, %s, %s, %s, %s, %s);
             """
             params = (server_id, user_id, error_type, error_message, stack_trace, fecha_hora)
-            
+
             cur.execute(query, params)
             conn.commit()
             print(f"[ERROR LOG] {error_type} registrado para server {server_id or 'global'} - Usuario: {user_id or 'N/A'}")
@@ -60,7 +60,7 @@ def log_error(error_message, server_id=None, user_id=None, error_type="Unknown",
 def log_command_error(ctx, error):
     """
     Registra errores de comandos de Discord.
-    
+
     Args:
         ctx: El contexto del comando
         error: La excepción del error
@@ -70,7 +70,7 @@ def log_command_error(ctx, error):
     error_type = type(error).__name__
     error_message = str(error)
     stack_trace = traceback.format_exc()
-    
+
     log_error(
         error_message=error_message,
         server_id=server_id,

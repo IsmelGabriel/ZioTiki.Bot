@@ -1,19 +1,8 @@
-import os
-from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import closing
 
-load_dotenv()
-
-# Configuración desde variables de entorno
-DB_CONFIG = {
-    "dbname": os.getenv("dbname"),
-    "user": os.getenv("user"),
-    "password": os.getenv("password"),
-    "host": os.getenv("host"),
-    "port": os.getenv("port", 5432)
-}
+from config import DB_CONFIG
 
 def conectar():
     """Conecta a la base de datos y devuelve la conexión."""
