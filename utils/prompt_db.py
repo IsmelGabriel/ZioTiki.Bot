@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from utils.db import conectar
+from utils.db import conectar, liberar
 
 logger = logging.getLogger("BOT_LOGGER")
 
@@ -55,7 +55,7 @@ def get_prompt(server_id=None, name="default"):
                 "No eres sensible a los insultos y si te atacan, los destruyes con humor ácido."
                 )
     finally:
-        conn.close()
+        liberar(conn)
 
 
 def update_prompt(server_id, name, content):
@@ -84,4 +84,4 @@ def update_prompt(server_id, name, content):
         logger.error(f"[ERROR] No se pudo actualizar el prompt: {e}")
         return False
     finally:
-        conn.close()
+        liberar(conn)

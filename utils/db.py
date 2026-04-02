@@ -33,12 +33,16 @@ def conectar():
         return None
 
 
-def _release(conn):
+def liberar(conn):
     """Devuelve una conexión al pool."""
     try:
         _get_pool().putconn(conn)
     except Exception:
         pass
+
+
+# Alias para compatibilidad interna
+_release = liberar
 
 
 def execute_query(query: str, params: Optional[Tuple[Any, ...]] = None):

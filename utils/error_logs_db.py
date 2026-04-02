@@ -1,5 +1,5 @@
 from datetime import datetime
-from utils.db import conectar
+from utils.db import conectar, liberar
 import traceback
 
 def log_error(error_message, server_id=None, user_id=None, error_type="Unknown", stack_trace=None):
@@ -54,7 +54,7 @@ def log_error(error_message, server_id=None, user_id=None, error_type="Unknown",
             print(f"[ERROR] Intento fallido de registro alternativo: {e2}")
             return False
     finally:
-        conn.close()
+        liberar(conn)
 
 
 def log_command_error(ctx, error):
