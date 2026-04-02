@@ -27,24 +27,6 @@ def login_required(f):
 def register_routes(app):
     """Registra todas las rutas y error handlers en la app Flask."""
 
-    # ── Autenticación ────────────────────────────────────────────────
-
-    @app.route("/login", methods=["GET", "POST"])
-    def login():
-        if not DASHBOARD_PASSWORD:
-            return redirect(url_for("home"))
-        if request.method == "POST":
-            if request.form.get("password") == DASHBOARD_PASSWORD:
-                session["authenticated"] = True
-                return redirect(url_for("home"))
-            return render_template("login.html", error="Contraseña incorrecta."), 401
-        return render_template("login.html")
-
-    @app.route("/logout")
-    def logout():
-        session.pop("authenticated", None)
-        return redirect(url_for("login"))
-
     # ── Páginas ──────────────────────────────────────────────────────
 
     @app.route("/")
@@ -58,6 +40,28 @@ def register_routes(app):
             error_logs=error_logs,
             prompts=prompts_update,
         )
+
+    @app.route("/status")
+    @login_required
+    def status():
+        error_logs = get_error_logs()
+        prompts_update = get_lasts_prompt_update()
+        return render_template(
+            "status.html",
+            bot_status=bot_status,
+            error_logs=error_logs,
+            prompts=prompts_update,
+        )
+
+    @app.route("/about")
+    @login_required
+    def about():
+        return render_template("about.html", bot_status=bot_status)
+
+    @app.route("/manual")
+    @login_required
+    def manual():
+        return render_template("manual.html", bot_status=bot_status)
 
     # ── API endpoints ────────────────────────────────────────────────
 

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ziotiki Bot — Acerca</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .about-hero {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2.25rem;
+        }
+
+        .about-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .about-hero-text h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: .35rem;
+        }
+
+        .about-hero-text p {
+            color: var(--text-secondary);
+            font-size: .95rem;
+            max-width: 580px;
+        }
+
+        .about-hero-text .badges-row {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+            margin-top: .75rem;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 700px) {
+            .about-hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .about-hero-text .badges-row {
+                justify-content: center;
+            }
+
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: .6rem;
+        }
+
+        .info-list li {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .6rem .85rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            font-size: .9rem;
+        }
+
+        .info-list li .lbl {
+            color: var(--text-muted);
+            min-width: 130px;
+            font-size: .82rem;
+        }
+
+        .info-list li .val {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .tl-item {
+            display: flex;
+            gap: 1rem;
+            padding-bottom: 1.25rem;
+            position: relative;
+        }
+
+        .tl-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .tl-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            margin-top: .35rem;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .tl-item:not(:last-child) .tl-dot::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: calc(100% + 1.25rem - 14px);
+            background: var(--border);
+        }
+
+        .tl-content .tl-date {
+            font-size: .78rem;
+            color: var(--text-muted);
+            margin-bottom: .15rem;
+        }
+
+        .tl-content .tl-title {
+            font-weight: 600;
+            font-size: .93rem;
+        }
+
+        .tl-content .tl-desc {
+            font-size: .85rem;
+            color: var(--text-secondary);
+            margin-top: .2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── Navbar ── -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="bot-icon">🤖</div>
+            Ziotiki Bot
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">🏠 <span>Inicio</span></a></li>
+            <li><a href="/status">📡 <span>Estado</span></a></li>
+            <li><a href="/about" class="active">ℹ️ <span>Acerca</span></a></li>
+            <li><a href="/manual">📖 <span>Manual</span></a></li>
+        </ul>
+        <div class="nav-status">
+            <div class="status-dot" id="nav-dot"></div>
+            <span id="nav-ping-text">Cargando…</span>
+        </div>
+    </nav>
+
+    <main class="page">
+        <div class="container">
+
+            <!-- Page header -->
+            <div class="page-header">
+                <h1>ℹ️ Acerca de Ziotiki Bot</h1>
+                <p>Todo lo que necesitas saber sobre el bot, su tecnología y su propósito.</p>
+            </div>
+
+            <!-- About hero card -->
+            <div class="about-hero">
+                <div class="about-avatar">🤖</div>
+                <div class="about-hero-text">
+                    <h2>Ziotiki Bot</h2>
+                    <p>
+                        Un bot de Discord multifuncional que combina moderación, entretenimiento e
+                        inteligencia artificial generativa. Diseñado para enriquecer la experiencia
+                        de cualquier servidor con comandos útiles y conversaciones naturales potenciadas por OpenAI.
+                    </p>
+                    <div class="badges-row">
+                        <span class="badge badge-success">🟢 Activo</span>
+                        <span class="badge badge-accent">🐍 Python</span>
+                        <span class="badge badge-purple">🧠 GPT-4.1-mini</span>
+                        <span class="badge badge-accent">⚡ discord.py</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two columns -->
+            <div class="two-col">
+
+                <!-- Info general -->
+                <div class="card" style="transition:none; transform:none;">
+                    <div class="section-title" style="margin-bottom:1rem;">📋 <span>Información general</span></div>
+                    <ul class="info-list">
+                        <li>
+                            <span>🤖</span>
+                            <span class="lbl">Nombre</span>
+                            <span class="val">Ziotiki Bot</span>
+                        </li>
+                        <li>
+                            <span>🏷️</span>
+                            <span class="lbl">Prefijo de comandos</span>
+                            <span class="val td-mono">=</span>
+                        </li>
+                        <li>
+                            <span>🧠</span>
+                            <span class="lbl">Modelo de IA</span>
+                            <span class="val">GPT-4.1-mini</span>
+                        </li>
+                        <li>
+                            <span>🗄️</span>
+                            <span class="lbl">Base de datos</span>
+                            <span class="val">PostgreSQL</span>
+                        </li>
+                        <li>
+                            <span>🌐</span>
+                            <span class="lbl">Framework web</span>
+                            <span class="val">Flask + Gunicorn</span>
+                        </li>
+                        <li>
+                            <span>🐍</span>
+                            <span class="lbl">Lenguaje</span>
+                            <span class="val">Python 3</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Módulos disponibles -->
+                <div class="card" style="transition:none; transform:none;">
+                    <div class="section-title" style="margin-bottom:1rem;">🧩 <span>Módulos (Cogs)</span></div>
+                    <ul class="info-list">
+                        <li>
+                            <span>🛡️</span>
+                            <span class="lbl">Admin</span>
+                            <span class="val">Moderación</span>
+                        </li>
+                        <li>
+                            <span>🎉</span>
+                            <span class="lbl">Fun</span>
+                            <span class="val">Entretenimiento</span>
+                        </li>
+                        <li>
+                            <span>📡</span>
+                            <span class="lbl">General</span>
+                            <span class="val">Utilidades básicas</span>
+                        </li>
+                        <li>
+                            <span>🧠</span>
+                            <span class="lbl">IA</span>
+                            <span class="val">Inteligencia Artificial</span>
+                        </li>
+                        <li>
+                            <span>⚠️</span>
+                            <span class="lbl">Command Error</span>
+                            <span class="val">Manejo de errores</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div><!-- /two-col -->
+
+            <!-- Technology stack -->
+            <div class="section-title" style="margin-bottom:1rem;">⚙️ <span>Tecnologías utilizadas</span></div>
+            <div class="card" style="margin-bottom:2rem; transition:none; transform:none;">
+                <div class="tech-grid">
+                    <span class="tech-chip">🐍 Python 3</span>
+                    <span class="tech-chip">🤖 discord.py</span>
+                    <span class="tech-chip">🧠 OpenAI API</span>
+                    <span class="tech-chip">🗄️ PostgreSQL</span>
+                    <span class="tech-chip">🌐 Flask</span>
+                    <span class="tech-chip">🚀 Gunicorn / WSGI</span>
+                    <span class="tech-chip">🔐 python-dotenv</span>
+                    <span class="tech-chip">📦 psycopg2</span>
+                    <span class="tech-chip">🔁 asyncio</span>
+                    <span class="tech-chip">📝 logging</span>
+                </div>
+            </div>
+
+            <!-- Features detail -->
+            <div class="section-title" style="margin-bottom:1rem;">✨ <span>Capacidades destacadas</span></div>
+            <div class="features-grid" style="margin-bottom:2.5rem;">
+                <div class="feature-card">
+                    <div class="feature-icon blue">🧠</div>
+                    <h3>IA con memoria</h3>
+                    <p>El comando <code style="color:var(--accent);">=ask</code> recuerda el historial de tu
+                        conversación para dar respuestas más contextuales.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon purple">🔧</div>
+                    <h3>Prompts por servidor</h3>
+                    <p>Cada servidor puede tener su propio prompt personalizado con <code
+                            style="color:var(--accent);">=setprompt</code>, dándole identidad única a la IA.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon red">🛡️</div>
+                    <h3>Moderación completa</h3>
+                    <p>Silenciar, expulsar y banear miembros con validaciones de jerarquía de roles para evitar abusos.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green">📊</div>
+                    <h3>Dashboard web</h3>
+                    <p>Panel de control en tiempo real con estado del bot, registros de errores y actualizaciones de
+                        prompts.</p>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="section-title" style="margin-bottom:1.25rem;">🗓️ <span>Historial de versiones</span></div>
+            <div class="card" style="transition:none; transform:none; margin-bottom:2rem;">
+                <div class="timeline">
+                    <div class="tl-item">
+                        <div class="tl-dot"></div>
+                        <div class="tl-content">
+                            <div class="tl-date">Versión actual</div>
+                            <div class="tl-title">Dashboard web completo</div>
+                            <div class="tl-desc">Páginas de inicio, estado, acerca y manual con diseño dark theme.</div>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot"></div>
+                        <div class="tl-content">
+                            <div class="tl-date">Versión 1.2</div>
+                            <div class="tl-title">Integración con OpenAI GPT-4.1-mini</div>
+                            <div class="tl-desc">Memoria conversacional por servidor y usuario, prompts personalizables.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot"></div>
+                        <div class="tl-content">
+                            <div class="tl-date">Versión 1.1</div>
+                            <div class="tl-title">Sistema de moderación</div>
+                            <div class="tl-desc">Comandos mute, unmute, kick y ban con jerarquía de roles.</div>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot"></div>
+                        <div class="tl-content">
+                            <div class="tl-date">Versión 1.0</div>
+                            <div class="tl-title">Lanzamiento inicial</div>
+                            <div class="tl-desc">Bot base con comandos de diversión y utilidades generales.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div style="text-align:center; padding: 1rem 0 0.5rem;">
+                <a href="https://discord.com/oauth2/authorize?client_id=1318670732380864554&permissions=8&scope=bot"
+                    target="_blank" rel="noopener" class="btn btn-primary" style="font-size:1rem; padding:.75rem 2rem;">
+                    ➕ Invitar Ziotiki Bot a tu servidor
+                </a>
+                <a href="/manual" class="btn btn-outline"
+                    style="font-size:1rem; padding:.75rem 2rem; margin-left:.75rem;">
+                    📖 Ver manual de comandos
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        fetch('/api/status')
+            .then(r => r.json())
+            .then(data => {
+                const ping = parseInt(data.ping) || 0;
+                const s = (data.status || '').toLowerCase();
+                const dot = document.getElementById('nav-dot');
+                const txt = document.getElementById('nav-ping-text');
+                if (s === 'online') { dot.classList.remove('offline'); txt.textContent = ping + ' ms'; }
+                else { dot.classList.add('offline'); txt.textContent = 'Offline'; }
+            })
+            .catch(() => {
+                document.getElementById('nav-dot').classList.add('offline');
+                document.getElementById('nav-ping-text').textContent = 'Error';
+            });
+    </script>
+
+</body>
+
+</html>

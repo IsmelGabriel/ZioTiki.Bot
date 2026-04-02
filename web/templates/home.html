@@ -1,123 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ziotiki Bot</title>
+    <title>Ziotiki Bot — Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        text-align: center;
-        padding: 50px;
-    }
-
-    h2 {
-        color: #4CAF50;
-    }
-
-    p {
-        font-size: 18px;
-    }
-
-    a {
-        color: #4CAF50;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    table {
-        width: 80%;
-        margin: 20px auto;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-</style>
-
 <body>
-    <h2>Ziotiki Bot</h2>
-    <p>Status: <span id="status">{{ bot_status["status"] }}</span> | Ping: <span id="ping">{{ bot_status["ping"] }}</span> ms</p>
-    <p>Last Restart: <span id="last_restart">{{ bot_status["last_restart"] }}</span></p>
-    <p>Current Activity: <span id="activity">{{ bot_status["activity"] }}</span></p>
-    <p>Invite bot to server: <a href="https://discord.com/oauth2/authorize?client_id=1318670732380864554&&permissions=8&scope=bot">INVITE</a></p>
+
+    <!-- ── Navbar ── -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="bot-icon">🤖</div>
+            Ziotiki Bot
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="active">🏠 <span>Inicio</span></a></li>
+            <li><a href="/status">📡 <span>Estado</span></a></li>
+            <li><a href="/about">ℹ️ <span>Acerca</span></a></li>
+            <li><a href="/manual">📖 <span>Manual</span></a></li>
+        </ul>
+        <div class="nav-status">
+            <div class="status-dot" id="nav-dot"></div>
+            <span id="nav-status-text">Cargando…</span>
+        </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <div class="container">
+        <div class="hero">
+            <div class="hero-avatar">🤖</div>
+            <h1>Ziotiki Bot</h1>
+            <p>Tu asistente inteligente para Discord. Moderación, diversión e IA — todo en uno.</p>
+            <div class="hero-actions">
+                <a href="https://discord.com/oauth2/authorize?client_id=1318670732380864554&permissions=8&scope=bot"
+                    target="_blank" rel="noopener" class="btn btn-primary">
+                    ➕ Invitar al servidor
+                </a>
+                <a href="/manual" class="btn btn-outline">📖 Ver comandos</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Main content ── -->
+    <main class="page">
+        <div class="container">
+
+            <!-- Stats row -->
+            <div class="stats-grid" style="margin-bottom:2rem;">
+                <div class="stat-card">
+                    <div class="stat-icon green">📶</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-ping">—</div>
+                        <div class="stat-label">Ping (ms)</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">🔵</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-status">—</div>
+                        <div class="stat-label">Estado del bot</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">⏰</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-restart" style="font-size:.95rem;">—</div>
+                        <div class="stat-label">Último reinicio</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon yellow">⚡</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="stat-activity" style="font-size:.9rem; word-break:break-word;">—
+                        </div>
+                        <div class="stat-label">Actividad actual</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="section-title">✨ <span>Características</span></div>
+            <div class="features-grid" style="margin-bottom:2.5rem;">
+                <div class="feature-card">
+                    <div class="feature-icon blue">🧠</div>
+                    <h3>Inteligencia Artificial</h3>
+                    <p>Conversa con GPT-4.1-mini directamente desde Discord. El bot recuerda el contexto de tu
+                        conversación.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon red">🛡️</div>
+                    <h3>Moderación</h3>
+                    <p>Herramientas para silenciar, expulsar y banear miembros. Mantén tu servidor en orden fácilmente.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon yellow">🎉</div>
+                    <h3>Diversión</h3>
+                    <p>Comandos de entretenimiento: chistes aleatorios, lanzamiento de dados y más para animar el
+                        servidor.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon purple">🔧</div>
+                    <h3>Personalizable</h3>
+                    <p>Los administradores pueden configurar un prompt de IA personalizado para cada servidor.</p>
+                </div>
+            </div>
+
+            <!-- Two-column: error logs + prompt updates -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
+
+                <!-- Error logs -->
+                <div>
+                    <div class="section-title">⚠️ <span>Últimos errores</span></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Mensaje</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if error_logs %}
+                                {% for log in error_logs %}
+                                <tr>
+                                    <td><span class="badge badge-danger">{{ log.get('error_type','?') }}</span></td>
+                                    <td class="td-truncate">{{ log.error_message[:60] }}{% if log.error_message|length >
+                                        60 %}…{% endif %}</td>
+                                    <td style="white-space:nowrap; color:var(--text-muted); font-size:.8rem;">{{
+                                        log.created_at }}</td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" style="text-align:center; color:var(--text-muted);">✅ Sin errores
+                                        registrados</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Prompt updates -->
+                <div>
+                    <div class="section-title">💬 <span>Últimos prompts</span></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Servidor</th>
+                                    <th>Nombre</th>
+                                    <th>Actualizado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if prompts %}
+                                {% for prompt in prompts %}
+                                <tr>
+                                    <td class="td-mono">{{ prompt.server_id }}</td>
+                                    <td><strong>{{ prompt.name }}</strong></td>
+                                    <td style="white-space:nowrap; color:var(--text-muted); font-size:.8rem;">{{
+                                        prompt.updated_at }}</td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" style="text-align:center; color:var(--text-muted);">Sin
+                                        actualizaciones</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div><!-- /two-column -->
+
+        </div>
+    </main>
 
     <script>
-        function updateStatus() {
-            fetch('/api/status')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('status').textContent = data.status;
-                    document.getElementById('ping').textContent = data.ping;
-                    document.getElementById('last_restart').textContent = data.last_restart || 'N/A';
-                    document.getElementById('activity').textContent = data.activity;
-                })
-                .catch(error => console.error('Error:', error));
+        function applyStatus(data) {
+            // Ping
+            const ping = parseInt(data.ping) || 0;
+            document.getElementById('stat-ping').textContent = ping + ' ms';
+
+            // Status badge
+            const s = (data.status || '').toLowerCase();
+            const statusEl = document.getElementById('stat-status');
+            statusEl.innerHTML = s === 'online'
+                ? '<span class="badge badge-success">🟢 Online</span>'
+                : '<span class="badge badge-danger">🔴 Offline</span>';
+
+            // Nav dot
+            const dot = document.getElementById('nav-dot');
+            const navTxt = document.getElementById('nav-status-text');
+            if (s === 'online') {
+                dot.classList.remove('offline');
+                navTxt.textContent = ping + ' ms';
+            } else {
+                dot.classList.add('offline');
+                navTxt.textContent = 'Offline';
+            }
+
+            document.getElementById('stat-restart').textContent = data.last_restart || 'N/A';
+            document.getElementById('stat-activity').textContent = data.activity || 'N/A';
         }
-        // Actualizar al cargar la página
-        updateStatus();
-        // Actualizar cada 30 segundos
-        setInterval(updateStatus, 30000);
+
+        function fetchStatus() {
+            fetch('/api/status')
+                .then(r => r.json())
+                .then(applyStatus)
+                .catch(() => {
+                    document.getElementById('nav-status-text').textContent = 'Error';
+                    document.getElementById('nav-dot').classList.add('offline');
+                });
+        }
+
+        fetchStatus();
+        setInterval(fetchStatus, 30000);
     </script>
 
-    <h3>Recent Error Logs</h3>
-    <table>
-        <tr>
-            <th>Tipo</th>
-            <th>Server ID</th>
-            <th>User ID</th>
-            <th>Mensaje</th>
-            <th>Fecha</th>
-        </tr>
-        {% if error_logs %}
-        {% for log in error_logs %}
-        <tr>
-            <td><strong>{{ log.get('error_type', 'Unknown') }}</strong></td>
-            <td>{{ log.server_id or '-' }}</td>
-            <td>{{ log.get('user_id', '-') or '-' }}</td>
-            <td>{{ log.error_message[:80] }}{% if log.error_message|length > 80 %}...{% endif %}</td>
-            <td>{{ log.created_at }}</td>
-        </tr>
-        {% endfor %}
-        {% else %}
-        <tr>
-            <td colspan="5">No error logs found.</td>
-        </tr>
-        {% endif %}
-    </table>
-
-    <h3>Last Prompt Update</h3>
-    <table>
-        <tr>
-            <th>Server ID</th>
-            <th>Name</th>
-            <th>Content</th>
-            <th>Updated At</th>
-        </tr>
-        {% if prompts %}
-        {% for prompt in prompts %}
-        <tr>
-            <td>{{ prompt.server_id }}</td>
-            <td>{{ prompt.name }}</td>
-            <td>{{ prompt.content[:100] }}...</td>
-            <td>{{ prompt.updated_at }}</td>
-        </tr>
-        {% endfor %}
-        {% else %}
-        <tr>
-            <td colspan="4">No prompt updates found.</td>
-        </tr>
-        {% endif %}
-    </table>
-
 </body>
+
 </html>

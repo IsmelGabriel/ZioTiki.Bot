@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ziotiki Bot — Estado</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <!-- ── Navbar ── -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="bot-icon">🤖</div>
+            Ziotiki Bot
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">🏠 <span>Inicio</span></a></li>
+            <li><a href="/status" class="active">📡 <span>Estado</span></a></li>
+            <li><a href="/about">ℹ️ <span>Acerca</span></a></li>
+            <li><a href="/manual">📖 <span>Manual</span></a></li>
+        </ul>
+        <div class="nav-status">
+            <div class="status-dot" id="nav-dot"></div>
+            <span id="nav-ping-text">Cargando…</span>
+        </div>
+    </nav>
+
+    <main class="page">
+        <div class="container">
+
+            <!-- Page header -->
+            <div class="page-header">
+                <h1>📡 Estado del Bot</h1>
+                <p>Monitoreo en tiempo real — se actualiza automáticamente cada 30 segundos.</p>
+            </div>
+
+            <!-- Status cards -->
+            <div class="stats-grid" style="margin-bottom:2rem;">
+
+                <div class="stat-card">
+                    <div class="stat-icon green">📶</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="s-ping" data-ping="{{ bot_status['ping'] | default(0) }}">{{ bot_status["ping"] }} ms</div>
+                        <div class="stat-label">Latencia</div>
+                        <div class="ping-bar-wrap">
+                            <div class="ping-bar-track">
+                                <div class="ping-bar-fill" id="ping-bar" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">🔵</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="s-status">
+                            {% if bot_status["status"] == "Online" %}
+                            <span class="badge badge-success">🟢 Online</span>
+                            {% else %}
+                            <span class="badge badge-danger">🔴 Offline</span>
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Estado del bot</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">⏰</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="s-restart" style="font-size:.9rem;">{{ bot_status["last_restart"] or "N/A" }}</div>
+                        <div class="stat-label">Último reinicio</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon yellow">⚡</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="s-activity" style="font-size:.88rem; word-break:break-word;">{{ bot_status["activity"] or "N/A" }}</div>
+                        <div class="stat-label">Actividad</div>
+                    </div>
+                </div>
+
+            </div><!-- /stats-grid -->
+
+            <!-- Error logs -->
+            <div class="section-title" style="margin-top:1.5rem;">⚠️ <span>Registros de errores recientes</span></div>
+            <div class="table-wrap" style="margin-bottom:2rem;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Server ID</th>
+                            <th>User ID</th>
+                            <th>Mensaje</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if error_logs %}
+                        {% for log in error_logs %}
+                        <tr>
+                            <td><span class="badge badge-danger">{{ log.get('error_type', 'Unknown') }}</span></td>
+                            <td class="td-mono">{{ log.server_id or '—' }}</td>
+                            <td class="td-mono">{{ log.get('user_id', '—') or '—' }}</td>
+                            <td class="td-truncate" title="{{ log.error_message }}">
+                                {{ log.error_message[:90] }}{% if log.error_message|length > 90 %}…{% endif %}
+                            </td>
+                            <td style="white-space:nowrap; color:var(--text-muted); font-size:.8rem;">{{ log.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding:1.5rem; color:var(--text-muted);">
+                                ✅ No hay errores registrados
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Prompt updates -->
+            <div class="section-title">💬 <span>Últimas actualizaciones de prompts</span></div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Server ID</th>
+                            <th>Nombre</th>
+                            <th>Contenido (preview)</th>
+                            <th>Actualizado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if prompts %}
+                        {% for prompt in prompts %}
+                        <tr>
+                            <td class="td-mono">{{ prompt.server_id }}</td>
+                            <td><strong>{{ prompt.name }}</strong></td>
+                            <td class="td-truncate" title="{{ prompt.content }}">
+                                {{ prompt.content[:100] }}{% if prompt.content|length > 100 %}…{% endif %}
+                            </td>
+                            <td style="white-space:nowrap; color:var(--text-muted); font-size:.8rem;">{{ prompt.updated_at }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align:center; padding:1.5rem; color:var(--text-muted);">
+                                Sin actualizaciones de prompts
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function setPingBar(ping) {
+            const fill = document.getElementById('ping-bar');
+            if (!fill) return;
+            const pct = Math.min(ping / 3, 100); // 300ms = 100%
+            fill.style.width = pct + '%';
+            if (ping < 100) fill.style.background = 'var(--success)';
+            else if (ping < 200) fill.style.background = 'var(--warning)';
+            else fill.style.background = 'var(--danger)';
+        }
+
+        function updateStatus() {
+            fetch('/api/status')
+                .then(r => r.json())
+                .then(data => {
+                    const ping = parseInt(data.ping) || 0;
+                    document.getElementById('s-ping').textContent = ping + ' ms';
+                    document.getElementById('s-restart').textContent = data.last_restart || 'N/A';
+                    document.getElementById('s-activity').textContent = data.activity || 'N/A';
+                    setPingBar(ping);
+
+                    const s = (data.status || '').toLowerCase();
+                    document.getElementById('s-status').innerHTML = s === 'online'
+                        ? '<span class="badge badge-success">🟢 Online</span>'
+                        : '<span class="badge badge-danger">🔴 Offline</span>';
+
+                    const dot = document.getElementById('nav-dot');
+                    const txt = document.getElementById('nav-ping-text');
+                    if (s === 'online') { dot.classList.remove('offline'); txt.textContent = ping + ' ms'; }
+                    else { dot.classList.add('offline'); txt.textContent = 'Offline'; }
+                })
+                .catch(() => {
+                    document.getElementById('nav-dot').classList.add('offline');
+                    document.getElementById('nav-ping-text').textContent = 'Error';
+                });
+        }
+
+        // Init ping bar leyendo el valor desde el atributo data del DOM (evita errores de sintaxis con Jinja2 en JS)
+        const initialPing = parseInt(document.getElementById('s-ping').dataset.ping) || 0;
+        setPingBar(initialPing);
+        updateStatus();
+        setInterval(updateStatus, 30000);
+    </script>
+
+</body>
+
+</html>
