@@ -17,7 +17,7 @@ def get_history(server_id: int, user_id: int):
         FROM memories
         WHERE server_id = %s AND user_id = %s
         ORDER BY id ASC
-        LiMIT 15
+        LIMIT 15
     """
     params = (server_id, user_id)
     return fetch_query(query, params) or []

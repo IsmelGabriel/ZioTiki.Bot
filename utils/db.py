@@ -1,19 +1,47 @@
+import logging
+
 import psycopg2
+from psycopg2 import pool
 from psycopg2.extras import RealDictCursor
-from contextlib import closing
+from typing import Optional, Tuple, Any
 
 from config import DB_CONFIG
 
+logger = logging.getLogger(__name__)
+
+_pool: Optional[pool.ThreadedConnectionPool] = None
+
+
+def _get_pool() -> pool.ThreadedConnectionPool:
+    """Initializes (once) and returns the connection pool."""
+    global _pool
+    if _pool is None or _pool.closed:
+        try:
+            _pool = pool.ThreadedConnectionPool(minconn=1, maxconn=10, **DB_CONFIG)
+        except Exception as e:
+            logger.error("No se pudo crear el pool de conexiones: %s", e)
+            raise
+    return _pool
+
+
 def conectar():
-    """Conecta a la base de datos y devuelve la conexión."""
+    """Obtiene una conexión del pool."""
     try:
-        return psycopg2.connect(**DB_CONFIG)
+        return _get_pool().getconn()
     except Exception as e:
-        print(f"[ERROR] No se pudo conectar a la base de datos: {e}")
+        logger.error("No se pudo obtener conexión del pool: %s", e)
         return None
 
 
-def execute_query(query: str, params: tuple = None):
+def _release(conn):
+    """Devuelve una conexión al pool."""
+    try:
+        _get_pool().putconn(conn)
+    except Exception:
+        pass
+
+
+def execute_query(query: str, params: Optional[Tuple[Any, ...]] = None):
     """Ejecuta una consulta (INSERT, UPDATE, DELETE) con commit automático."""
     conn = conectar()
     if not conn:
@@ -24,13 +52,13 @@ def execute_query(query: str, params: tuple = None):
                 cur.execute(query, params)
         return True
     except Exception as e:
-        print(f"[ERROR] Error ejecutando query: {e}")
+        logger.error("Error ejecutando query: %s", e)
         return False
     finally:
-        conn.close()
+        _release(conn)
 
 
-def fetch_query(query: str, params: tuple = None):
+def fetch_query(query: str, params: Optional[Tuple[Any, ...]] = None):
     """Ejecuta una consulta SELECT y devuelve los resultados."""
     conn = conectar()
     if not conn:
@@ -41,7 +69,7 @@ def fetch_query(query: str, params: tuple = None):
                 cur.execute(query, params)
                 return cur.fetchall()
     except Exception as e:
-        print(f"[ERROR] Error en SELECT: {e}")
+        logger.error("Error en SELECT: %s", e)
         return None
     finally:
-        conn.close()
+        _release(conn)

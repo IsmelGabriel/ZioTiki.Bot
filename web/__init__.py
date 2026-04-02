@@ -5,6 +5,7 @@ import os
 
 from flask import Flask
 
+from utils.db_schema import initialize_database
 from web.routes import register_routes
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,9 @@ def create_app():
 
     app.config["SECRET_KEY"] = SECRET_KEY
     app.config["DEBUG"] = DEBUG
+
+    if not initialize_database():
+        logger.error("No se pudo inicializar la base de datos al crear la app web.")
 
     # Registrar rutas y error handlers
     register_routes(app)

@@ -7,14 +7,17 @@ class CommandsError(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
-            await ctx.send("❌ Command not found. Type =help command for more info on a command.")
+            prefix = ctx.prefix or "="
+            await ctx.send(f"❌ Command not found. Type {prefix}help command for more info on a command.")
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.send("❌ Command missing required arguments.")
+        elif isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(f"⏳ Espera {error.retry_after:.0f}s antes de usar este comando de nuevo.")
         elif isinstance(error, commands.CheckFailure):
             await ctx.send("❌ You do not have permission to use this command.")
         else:
             await ctx.send("❌ An error occurred while processing the command.")
             raise error  # Re-raise the error for logging purposes
-        
+
 async def setup(bot):
     await bot.add_cog(CommandsError(bot))

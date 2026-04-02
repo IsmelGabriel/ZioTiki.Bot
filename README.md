@@ -2,7 +2,7 @@
 
 Bot de Discord con inteligencia artificial integrada y comandos de moderación.
 
-**Bot desplegado en:** https://discord-bot-rh78.onrender.com/
+**Bot desplegado en:** <https://discord-bot-rh78.onrender.com/>
 
 ## Características
 
@@ -22,23 +22,27 @@ Bot de Discord con inteligencia artificial integrada y comandos de moderación.
 ### Pasos
 
 1. Clonar el repositorio:
+
 ```bash
 git clone https://github.com/IsmelGabriel/discord-bot.git
 cd discord-bot
 ```
 
-2. Crear un entorno virtual:
+1. Crear un entorno virtual:
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # En Windows usa `venv\Scripts\activate`
 ```
 
-3. Instalar dependencias:
+1. Instalar dependencias:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Configurar variables de entorno:
+1. Configurar variables de entorno:
+
 ```bash
 DISCORD_TOKEN=tu_token_de_discord
 OPENAI_API_KEY=tu_api_key_de_openai
@@ -50,7 +54,8 @@ host=tu_host
 port=tu_puerto
 ```
 
-5. Ejecutar el bot:
+1. Ejecutar el bot:
+
 ```bash
 python bot.py
 ```
@@ -58,18 +63,22 @@ python bot.py
 ## Comandos
 
 ### Generales
+
 - `=ping` - Muestra la latencia del bot
 
 ### IA
+
 - `=ask <pregunta>` - Hace una pregunta al bot
 - `=reset` - Borra la memoria de conversación
 - `@<@bot_id> <mensaje>` - Menciona al bot para hablar con él
 
 ### Diversión
+
 - `=chiste` - Cuenta un chiste aleatorio
 - `=roll` - Lanza un dado de 6 caras
 
 ### Administración (requiere permisos)
+
 - `=mute <usuario>` - Silencia a un usuario
 - `=unmute <usuario>` - Quita el silencio a un usuario
 - `=kick <usuario> [razón]` - Expulsa a un usuario

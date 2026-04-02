@@ -11,6 +11,7 @@ from utils.logger_db import guardar_log
 from utils.ia import generate_response
 from utils.error_logs_db import log_command_error, log_ai_error
 from utils.bot_status import bot_status
+from utils.db_schema import initialize_database
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -75,25 +76,27 @@ async def on_message(message):
         if not prompt:
             await message.channel.send("👋 Hello! How can I assist you today?")
 
-        if len(prompt) > 300:
+        elif len(prompt) > 300:
             await message.channel.send("⚠️ Your message is too long! Please keep it under 300 characters.")
 
         else:
-            await message.channel.typing()
-            server_id = message.guild.id if message.guild else 0
-            try:
-                response = generate_response(server_id, message.author.id, prompt)
-                user = message.author.mention
-                await message.channel.send(response + f"\n{user}")
-            except Exception as e:
-                log_ai_error(
-                    error_message=str(e),
-                    server_id=server_id,
-                    user_id=message.author.id
-                )
-                await message.channel.send(
-                    "El sistema de IA no esta disponible en este \
-                    momento o se encuentra en mantenimiento!"
+            async with message.channel.typing():
+                server_id = message.guild.id if message.guild else 0
+                try:
+                    response = await asyncio.to_thread(
+                        generate_response, server_id, message.author.id, prompt
+                    )
+                    user = message.author.mention
+                    await message.channel.send(response + f"\n{user}")
+                except Exception as e:
+                    log_ai_error(
+                        error_message=str(e),
+                        server_id=server_id,
+                        user_id=message.author.id
+                    )
+                    await message.channel.send(
+                        "El sistema de IA no esta disponible en este "
+                        "momento o se encuentra en mantenimiento!"
                     )
 
     await bot.process_commands(message)
@@ -121,6 +124,11 @@ def start_bot():
     if _bot_started:
         logger.warning("Bot is already running!")
         return
+
+    if not initialize_database():
+        logger.error("Database initialization failed. Bot startup aborted.")
+        return
+
     if TESTING_MODE:
         logger.info("Bot is running in TESTING MODE.")
         async def test_runner():
@@ -145,3 +153,7 @@ def start_bot():
 def run_bot_thread():
     thread = threading.Thread(target=start_bot, daemon=True)
     thread.start()
+
+
+if __name__ == "__main__":
+    start_bot()
