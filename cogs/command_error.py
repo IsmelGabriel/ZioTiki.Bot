@@ -6,6 +6,8 @@ class CommandsError(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        if getattr(error, "handled", False):
+            return
         if isinstance(error, commands.CommandNotFound):
             prefix = ctx.prefix or "="
             await ctx.send(f"❌ Command not found. Type {prefix}help command for more info on a command.")

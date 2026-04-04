@@ -61,6 +61,46 @@ SCHEMA_STATEMENTS = [
     CREATE INDEX IF NOT EXISTS idx_prompts_server_name
     ON prompts (server_id, name);
     """,
+    # ── Trivia ──────────────────────────────────────────────────────
+    """
+    CREATE TABLE IF NOT EXISTS trivia_difficulties (
+        id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        name VARCHAR(50) NOT NULL UNIQUE,
+        points SMALLINT NOT NULL
+    );
+    """,
+    """
+    INSERT INTO trivia_difficulties (name, points)
+    VALUES ('facil', 1), ('medio', 3), ('dificil', 5)
+    ON CONFLICT (name) DO NOTHING;
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS trivia_questions (
+        id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        server_id BIGINT NOT NULL,
+        question TEXT NOT NULL,
+        answer TEXT NOT NULL,
+        difficulty VARCHAR(50) NOT NULL REFERENCES trivia_difficulties(name),
+        created_by BIGINT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS trivia_scores (
+        server_id BIGINT NOT NULL,
+        user_id BIGINT NOT NULL,
+        points BIGINT NOT NULL DEFAULT 0,
+        PRIMARY KEY (server_id, user_id)
+    );
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_trivia_questions_server
+    ON trivia_questions (server_id);
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_trivia_scores_server_points
+    ON trivia_scores (server_id, points DESC);
+    """,
 ]
 
 _db_init_lock = threading.Lock()
