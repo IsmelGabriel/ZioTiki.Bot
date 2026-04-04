@@ -10,7 +10,7 @@ from config import DISCORD_TOKEN, TESTING_MODE
 from utils.logger_db import guardar_log
 from utils.ia import generate_response
 from utils.error_logs_db import log_command_error, log_ai_error
-from utils.bot_status import bot_status
+from utils.bot_status import bot_status, save_bot_status_json
 from utils.db_schema import initialize_database
 
 # Configure logging
@@ -31,6 +31,7 @@ async def on_ready():
     bot_status["status"] = "Online"
     bot_status["last_restart"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     bot_status["ping"] = round(bot.latency * 1000)
+    save_bot_status_json()
 
     server_count = len(bot.guilds)
     logger.info(f"Connected to {server_count} servers.")
@@ -43,10 +44,11 @@ async def on_ready():
     if not update_ping.is_running():
         update_ping.start()
 
-@tasks.loop(minutes=5)
+@tasks.loop(minutes=1)
 async def update_ping():
-    """Actualiza el ping del bot cada 5 minutos."""
+    """Actualiza el ping del bot cada 1 minuto."""
     bot_status["ping"] = round(bot.latency * 1000)
+    save_bot_status_json()
 
 
 @bot.event

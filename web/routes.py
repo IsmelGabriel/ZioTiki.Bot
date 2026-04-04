@@ -6,7 +6,7 @@ from functools import wraps
 from flask import render_template, jsonify, request, session, redirect, url_for
 
 from config import DASHBOARD_PASSWORD
-from utils.bot_status import bot_status
+from utils.bot_status import bot_status, load_bot_status_json
 from web.services import get_error_logs, get_lasts_prompt_update
 
 logger = logging.getLogger(__name__)
@@ -68,13 +68,15 @@ def register_routes(app):
     @app.route("/api/ping")
     @login_required
     def api_ping():
-        return jsonify({"ping": bot_status["ping"]})
+        data = load_bot_status_json() or bot_status
+        return jsonify({"ping": data["ping"]})
 
     @app.route("/api/status")
     @login_required
     def api_status():
-        """Endpoint para obtener todo el estado del bot."""
-        return jsonify(bot_status)
+        """Endpoint para obtener todo el estado del bot desde el JSON persistido."""
+        data = load_bot_status_json() or bot_status
+        return jsonify(data)
 
     # ── Error handlers ───────────────────────────────────────────────
 
