@@ -22,7 +22,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True  # Enable member intents
 
-bot = commands.Bot(command_prefix="=", intents=intents)
+bot = commands.Bot(command_prefix="=", intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
