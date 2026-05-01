@@ -24,6 +24,7 @@ intents.members = True  # Enable member intents
 
 bot = commands.Bot(command_prefix="=", intents=intents, help_command=None)
 
+
 @bot.event
 async def on_ready():
     logger.info(f"Bot is online: '{bot.user}'")
@@ -44,6 +45,7 @@ async def on_ready():
     if not update_ping.is_running():
         update_ping.start()
 
+
 @tasks.loop(minutes=1)
 async def update_ping():
     """Actualiza el ping del bot cada 1 minuto."""
@@ -57,6 +59,7 @@ async def on_command_error(ctx, error):
     # Registrar el error en la base de datos
     log_command_error(ctx, error)
 
+
 @bot.event
 async def on_message(message):
     if message.author.bot:
@@ -65,21 +68,31 @@ async def on_message(message):
     if not message.guild:
         return
 
-    guardar_log(
-        level="INFO",
-        server_id=message.guild.id if message.guild else 0,
-        author_id=message.author.id,
-        author_name=str(message.author),
-        mensaje=message.content
-    )
+    # Solo registramos el mensaje si es un comando o si mencionan al bot (para usar la IA).
+    if message.content.startswith(bot.command_prefix) or (
+        bot.user in message.mentions and not message.mention_everyone
+    ):
+        guardar_log(
+            level="INFO",
+            server_id=message.guild.id if message.guild else 0,
+            author_id=message.author.id,
+            author_name=str(message.author),
+            mensaje=message.content,
+        )
 
     if bot.user in message.mentions and not message.mention_everyone:
-        prompt = message.content.replace(f"<@{bot.user.id}>", "").replace(f"<@!{bot.user.id}>", "").strip()
+        prompt = (
+            message.content.replace(f"<@{bot.user.id}>", "")
+            .replace(f"<@!{bot.user.id}>", "")
+            .strip()
+        )
         if not prompt:
             await message.channel.send("👋 Hello! How can I assist you today?")
 
         elif len(prompt) > 300:
-            await message.channel.send("⚠️ Your message is too long! Please keep it under 300 characters.")
+            await message.channel.send(
+                "⚠️ Your message is too long! Please keep it under 300 characters."
+            )
 
         else:
             async with message.channel.typing():
@@ -94,7 +107,7 @@ async def on_message(message):
                     log_ai_error(
                         error_message=str(e),
                         server_id=server_id,
-                        user_id=message.author.id
+                        user_id=message.author.id,
                     )
                     await message.channel.send(
                         "El sistema de IA no esta disponible en este "
@@ -119,7 +132,9 @@ async def load_cogs():
             except Exception as e:
                 logger.error(f"Failed to load extension {filename}: {str(e)}")
 
+
 _bot_started = False
+
 
 def start_bot():
     global _bot_started
@@ -133,6 +148,7 @@ def start_bot():
 
     if TESTING_MODE:
         logger.info("Bot is running in TESTING MODE.")
+
         async def test_runner():
             async with bot:
                 await load_cogs()
@@ -140,8 +156,10 @@ def start_bot():
                     logger.error("No Discord token found!")
                     return
                 await bot.start(DISCORD_TOKEN)
+
         asyncio.run(test_runner())
         return
+
     async def runner():
         async with bot:
             await load_cogs()
@@ -151,6 +169,7 @@ def start_bot():
             await bot.start(DISCORD_TOKEN)
 
     asyncio.run(runner())
+
 
 def run_bot_thread():
     thread = threading.Thread(target=start_bot, daemon=True)
