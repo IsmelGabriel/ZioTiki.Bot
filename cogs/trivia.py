@@ -4,6 +4,7 @@ import asyncio
 import logging
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 from utils.trivia_db import (
@@ -21,81 +22,55 @@ from utils.trivia_db import (
 
 logger = logging.getLogger(__name__)
 
-# Tiempo en segundos para responder una pregunta
 ANSWER_TIMEOUT = 30
-
-# Preguntas activas: {channel_id: question_dict}
 _active_games: dict[int, dict] = {}
-
 
 class Trivia(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     # ── Comandos de administrador ─────────────────────────────────────────────
-
-    @commands.command(
-        name="trivia_add",
-        help="[Admin] Agrega una pregunta de trivia.\nUso: =trivia_add <dificultad> | <pregunta> | <respuesta>",
-    )
-    @commands.has_permissions(administrator=True)
-    async def trivia_add(self, ctx, *, args: str):
-        """Registra una pregunta. Formato: =trivia_add facil | ¿Cuánto es 2+2? | 4"""
-        parts = [p.strip() for p in args.split("|")]
-        if len(parts) != 3:
-            await ctx.send(
-                "❌ Formato incorrecto. Usa:\n"
-                "`=trivia_add <dificultad> | <pregunta> | <respuesta>`\n"
-                "Ejemplo: `=trivia_add facil | ¿Cuánto es 2+2? | 4`"
-            )
-            return
-
-        difficulty, question, answer = parts
-
-        if get_difficulty_points(difficulty) is None:
+    @app_commands.command(name="trivia_add", description="[Admin] Agrega una pregunta. d: facil/medio/dificil")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def trivia_add(self, interaction: discord.Interaction, dificultad: str, pregunta: str, respuesta: str):
+        if get_difficulty_points(dificultad.lower()) is None:
             diffs = ", ".join(f"`{d['name']}`" for d in get_difficulties())
-            await ctx.send(f"❌ Dificultad `{difficulty}` no existe. Opciones: {diffs}")
+            await interaction.response.send_message(f"❌ Dificultad `{dificultad}` no existe. Opciones: {diffs}", ephemeral=True)
             return
 
-        if len(question) < 5:
-            await ctx.send("❌ La pregunta es demasiado corta.")
+        if len(pregunta) < 5:
+            await interaction.response.send_message("❌ La pregunta es demasiado corta.", ephemeral=True)
             return
 
-        if len(answer) < 1:
-            await ctx.send("❌ La respuesta no puede estar vacía.")
+        if len(respuesta) < 1:
+            await interaction.response.send_message("❌ La respuesta no puede estar vacía.", ephemeral=True)
             return
 
-        if add_question(ctx.guild.id, question, answer, difficulty, ctx.author.id):
-            points = get_difficulty_points(difficulty)
-            await ctx.send(
+        if add_question(interaction.guild_id, pregunta, respuesta, dificultad.lower(), interaction.user.id):
+            points = get_difficulty_points(dificultad.lower())
+            await interaction.response.send_message(
                 f"✅ Pregunta registrada.\n"
-                f"**Dificultad:** {difficulty} ({points} pts)\n"
-                f"**Q:** {question}\n"
-                f"**R:** ||{answer}||"
+                f"**Dificultad:** {dificultad.lower()} ({points} pts)\n"
+                f"**Q:** {pregunta}\n"
+                f"**R:** ||{respuesta}||"
             )
         else:
-            await ctx.send("❌ Error al registrar la pregunta. Inténtalo de nuevo.")
+            await interaction.response.send_message("❌ Error al registrar la pregunta. Inténtalo de nuevo.", ephemeral=True)
 
-    @commands.command(
-        name="trivia_del",
-        help="[Admin] Elimina una pregunta por ID.\nUso: =trivia_del <id>",
-    )
-    @commands.has_permissions(administrator=True)
-    async def trivia_del(self, ctx, question_id: int):
-        if delete_question(question_id, ctx.guild.id):
-            await ctx.send(f"🗑️ Pregunta `#{question_id}` eliminada.")
+    @app_commands.command(name="trivia_del", description="[Admin] Elimina una pregunta por ID.")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def trivia_del(self, interaction: discord.Interaction, question_id: int):
+        if delete_question(question_id, interaction.guild_id):
+            await interaction.response.send_message(f"🗑️ Pregunta `#{question_id}` eliminada.")
         else:
-            await ctx.send(f"❌ No se encontró la pregunta `#{question_id}` en este servidor.")
+            await interaction.response.send_message(f"❌ No se encontró la pregunta `#{question_id}` en este servidor.", ephemeral=True)
 
-    @commands.command(
-        name="trivia_list",
-        help="[Admin] Lista las últimas 10 preguntas registradas en este servidor.",
-    )
-    @commands.has_permissions(administrator=True)
-    async def trivia_list(self, ctx):
-        questions = list_questions(ctx.guild.id)
+    @app_commands.command(name="trivia_list", description="[Admin] Lista las últimas 10 preguntas registradas.")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def trivia_list(self, interaction: discord.Interaction):
+        questions = list_questions(interaction.guild_id)
         if not questions:
-            await ctx.send("📭 No hay preguntas registradas en este servidor.")
+            await interaction.response.send_message("📭 No hay preguntas registradas en este servidor.", ephemeral=True)
             return
 
         lines = [f"`#{q['id']}` [{q['difficulty']}] {q['question']}" for q in questions]
@@ -104,29 +79,26 @@ class Trivia(commands.Cog):
             description="\n".join(lines),
             color=discord.Color.blue(),
         )
-        embed.set_footer(text=f"Total: {get_question_count(ctx.guild.id)} preguntas")
-        await ctx.send(embed=embed)
+        embed.set_footer(text=f"Total: {get_question_count(interaction.guild_id)} preguntas")
+        await interaction.response.send_message(embed=embed)
 
     # ── Comandos de juego ─────────────────────────────────────────────────────
 
-    @commands.command(
-        name="trivia",
-        help="Inicia una pregunta de trivia.",
-    )
-    async def trivia(self, ctx):
-        if ctx.channel.id in _active_games:
-            await ctx.send("⚠️ Ya hay una pregunta activa en este canal. ¡Respóndela primero!")
+    @app_commands.command(name="trivia", description="Inicia una pregunta de trivia.")
+    async def trivia(self, interaction: discord.Interaction):
+        if interaction.channel_id in _active_games:
+            await interaction.response.send_message("⚠️ Ya hay una pregunta activa en este canal. ¡Respóndela primero!", ephemeral=True)
             return
 
-        question = get_random_question(ctx.guild.id)
+        question = get_random_question(interaction.guild_id)
         if not question:
-            await ctx.send(
+            await interaction.response.send_message(
                 "📭 No hay preguntas registradas en este servidor.\n"
-                "Contacta a un administrador para que agregue algunas preguntas y respuestas."
+                "Contacta a un administrador para que agregue algunas.", ephemeral=True
             )
             return
 
-        _active_games[ctx.channel.id] = question
+        _active_games[interaction.channel_id] = question
 
         embed = discord.Embed(
             title="🎯 Trivia",
@@ -134,22 +106,22 @@ class Trivia(commands.Cog):
             color=discord.Color.gold(),
         )
         embed.add_field(name="Dificultad", value=f"{question['difficulty']} (+{question['points']} pts)")
-        embed.set_footer(text=f"Tienes {ANSWER_TIMEOUT} segundos para responder.")
-        await ctx.send(embed=embed)
+        embed.set_footer(text=f"Tienes {ANSWER_TIMEOUT} segundos para responder en el chat.")
+        await interaction.response.send_message(embed=embed)
 
         def check(msg: discord.Message) -> bool:
             return (
-                msg.channel.id == ctx.channel.id
+                msg.channel.id == interaction.channel_id
                 and not msg.author.bot
-                and msg.content.lower().strip() == question["answer"]
+                and msg.content.lower().strip() == question["answer"].lower()
             )
 
         try:
             msg = await self.bot.wait_for("message", check=check, timeout=ANSWER_TIMEOUT)
-            _active_games.pop(ctx.channel.id, None)
+            _active_games.pop(interaction.channel_id, None)
 
-            add_points(ctx.guild.id, msg.author.id, question["points"])
-            total = get_user_points(ctx.guild.id, msg.author.id)
+            add_points(interaction.guild_id, msg.author.id, question["points"])
+            total = get_user_points(interaction.guild_id, msg.author.id)
 
             embed_win = discord.Embed(
                 title="✅ ¡Correcto!",
@@ -158,28 +130,25 @@ class Trivia(commands.Cog):
             )
             embed_win.add_field(name="Puntos ganados", value=f"+{question['points']} pts")
             embed_win.add_field(name="Puntos totales", value=f"{total} pts")
-            await ctx.send(embed=embed_win)
+            await msg.channel.send(embed=embed_win)
 
         except asyncio.TimeoutError:
-            _active_games.pop(ctx.channel.id, None)
-            await ctx.send(
+            _active_games.pop(interaction.channel_id, None)
+            await interaction.channel.send(
                 f"⏰ ¡Se acabó el tiempo! La respuesta era: **{question['answer']}**"
             )
 
-    @commands.command(
-        name="trivia_top",
-        help="Muestra el ranking de puntos de trivia en este servidor.",
-    )
-    async def trivia_top(self, ctx):
-        leaderboard = get_leaderboard(ctx.guild.id)
+    @app_commands.command(name="trivia_top", description="Muestra el ranking de puntos de trivia.")
+    async def trivia_top(self, interaction: discord.Interaction):
+        leaderboard = get_leaderboard(interaction.guild_id)
         if not leaderboard:
-            await ctx.send("📭 Aún no hay puntos registrados en este servidor.")
+            await interaction.response.send_message("📭 Aún no hay puntos registrados en este servidor.")
             return
 
         medals = ["🥇", "🥈", "🥉"]
         lines = []
         for i, row in enumerate(leaderboard):
-            user = ctx.guild.get_member(row["user_id"])
+            user = interaction.guild.get_member(row["user_id"])
             name = user.display_name if user else f"Usuario {row['user_id']}"
             prefix = medals[i] if i < 3 else f"`{i+1}.`"
             lines.append(f"{prefix} **{name}** — {row['points']} pts")
@@ -189,25 +158,19 @@ class Trivia(commands.Cog):
             description="\n".join(lines),
             color=discord.Color.gold(),
         )
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.command(
-        name="trivia_puntos",
-        help="Muestra tus puntos de trivia en este servidor.",
-    )
-    async def trivia_puntos(self, ctx, member: discord.Member | None = None):
-        target = member or ctx.author
-        points = get_user_points(ctx.guild.id, target.id)
-        await ctx.send(f"🎯 **{target.display_name}** tiene **{points} puntos** de trivia en este servidor.")
+    @app_commands.command(name="trivia_puntos", description="Muestra tus puntos de trivia en este servidor.")
+    async def trivia_puntos(self, interaction: discord.Interaction, member: discord.Member = None):
+        target = member or interaction.user
+        points = get_user_points(interaction.guild_id, target.id)
+        await interaction.response.send_message(f"🎯 **{target.display_name}** tiene **{points} puntos** de trivia en este servidor.")
 
-    @commands.command(
-        name="trivia_dificultades",
-        help="Muestra las dificultades disponibles y sus puntos.",
-    )
-    async def trivia_dificultades(self, ctx):
+    @app_commands.command(name="trivia_dificultades", description="Muestra las dificultades disponibles y sus puntos.")
+    async def trivia_dificultades(self, interaction: discord.Interaction):
         diffs = get_difficulties()
         if not diffs:
-            await ctx.send("❌ No hay dificultades configuradas.")
+            await interaction.response.send_message("❌ No hay dificultades configuradas.")
             return
         lines = [f"**{d['name']}** → {d['points']} puntos" for d in diffs]
         embed = discord.Embed(
@@ -215,57 +178,7 @@ class Trivia(commands.Cog):
             description="\n".join(lines),
             color=discord.Color.blurple(),
         )
-        await ctx.send(embed=embed)
-
-
-    # ── Manejo de errores del cog ─────────────────────────────────────────────
-
-    _USAGE = {
-        "trivia_add": (
-            "`=trivia_add <dificultad> | <pregunta> | <respuesta>`\n"
-            "Ejemplo: `=trivia_add facil | ¿Cuánto es 2+2? | 4`\n"
-            "Dificultades: `facil`, `medio`, `dificil`"
-        ),
-        "trivia_del": (
-            "`=trivia_del <id>`\n"
-            "Ejemplo: `=trivia_del 12`\n"
-            "Usa `=trivia_list` para ver los IDs de las preguntas."
-        ),
-        "trivia_puntos": (
-            "`=trivia_puntos` — muestra tus puntos\n"
-            "`=trivia_puntos @usuario` — muestra los puntos de otro usuario"
-        ),
-    }
-
-    async def cog_command_error(self, ctx, error):
-        # Desenvuelve errores encapsulados por discord.py
-        error = getattr(error, "original", error)
-
-        command_name = ctx.command.name if ctx.command else ""
-        usage = self._USAGE.get(command_name)
-
-        if isinstance(error, commands.MissingRequiredArgument):
-            msg = f"❌ Argumentos faltantes:`."
-            if usage:
-                msg += f"\n\n📌 **Uso correcto:**\n{usage}"
-            await ctx.send(msg)
-            error.handled = True
-
-        elif isinstance(error, commands.BadArgument):
-            msg = "❌ Argumento inválido."
-            if usage:
-                msg += f"\n\n📌 **Uso correcto:**\n{usage}"
-            await ctx.send(msg)
-            error.handled = True
-
-        elif isinstance(error, commands.MissingPermissions):
-            await ctx.send("🔒 No tienes permisos de administrador para usar este comando.")
-            error.handled = True
-
-        else:
-            # Deja que el manejador global lo tome
-            raise error
-
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Trivia(bot))

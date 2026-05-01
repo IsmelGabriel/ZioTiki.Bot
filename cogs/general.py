@@ -1,15 +1,17 @@
+import discord
+from discord import app_commands
 from discord.ext import commands
 
 class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="ping", help="Check bot latency")
-    async def ping(self, ctx):
-        await ctx.send(f"Pong! Latency: {round(self.bot.latency * 1000)}ms")
+    @app_commands.command(name="ping", description="Check bot latency")
+    async def ping(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f"Pong! Latency: {round(self.bot.latency * 1000)}ms")
 
-    @commands.command(name="status", help="Check bot status")
-    async def status(self, ctx):
+    @app_commands.command(name="status", description="Check bot status")
+    async def status(self, interaction: discord.Interaction):
         ping = round(self.bot.latency * 1000)
         dashboard = "https://discord-bot-rh78.onrender.com/status"
         msg = (
@@ -19,7 +21,7 @@ class General(commands.Cog):
             f"Check the dashboard for more details: "
             f"[ZioTikiBot Dashboard]({dashboard})"
         )
-        await ctx.send(msg)
+        await interaction.response.send_message(msg)
 
 async def setup(bot):
     await bot.add_cog(General(bot))

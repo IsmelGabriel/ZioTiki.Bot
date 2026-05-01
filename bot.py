@@ -34,6 +34,13 @@ async def on_ready():
     bot_status["ping"] = round(bot.latency * 1000)
     save_bot_status_json()
 
+    # Sincronizar los Slash Commands
+    try:
+        synced = await bot.tree.sync()
+        logger.info(f"Synced {len(synced)} command(s)")
+    except Exception as e:
+        logger.error(f"Failed to sync commands: {e}")
+
     server_count = len(bot.guilds)
     logger.info(f"Connected to {server_count} servers.")
 
