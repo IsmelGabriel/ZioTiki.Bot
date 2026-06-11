@@ -7,6 +7,7 @@ from flask import Flask
 
 from utils.db_schema import initialize_database
 from web.routes import register_routes
+from flask_cors import CORS
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ def create_app():
 
     app.config["SECRET_KEY"] = SECRET_KEY
     app.config["DEBUG"] = DEBUG
+    CORS(app, resources={r"/api/*": {"origins": "https://mi-portal-z8nr.onrender.com, https://discord-bot-rh78.onrender.com"}})
 
     if not initialize_database():
         logger.error("No se pudo inicializar la base de datos al crear la app web.")
