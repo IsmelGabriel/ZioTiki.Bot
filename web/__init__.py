@@ -35,7 +35,15 @@ def create_app():
 
     app.config["SECRET_KEY"] = SECRET_KEY
     app.config["DEBUG"] = DEBUG
-    CORS(app, resources={r"/api/*": {"origins": "https://mi-portal-z8nr.onrender.com, https://discord-bot-rh78.onrender.com"}})
+
+    # Configurar CORS permitiendo el portal en producción y local
+    CORS(app, origins=[
+        "https://mi-portal-z8nr.onrender.com",
+        "https://discord-bot-rh78.onrender.com"
+        "http://127.0.0.1:5001",
+        "http://localhost:5001",
+        "http://192.168.0.12:5001"
+    ])
 
     if not initialize_database():
         logger.error("No se pudo inicializar la base de datos al crear la app web.")
