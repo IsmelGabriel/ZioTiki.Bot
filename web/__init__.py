@@ -7,6 +7,7 @@ from flask import Flask
 
 from utils.db_schema import initialize_database
 from web.routes import register_routes
+from config import CORS_ORIGINS
 from flask_cors import CORS
 
 logger = logging.getLogger(__name__)
@@ -37,13 +38,8 @@ def create_app():
     app.config["DEBUG"] = DEBUG
 
     # Configurar CORS permitiendo el portal en producción y local
-    CORS(app, origins=[
-        "https://mi-portal-z8nr.onrender.com",
-        "https://discord-bot-rh78.onrender.com"
-        "http://127.0.0.1:5001",
-        "http://localhost:5001",
-        "http://192.168.0.12:5001"
-    ])
+    CORS(app, origins=CORS_ORIGINS)
+
 
     if not initialize_database():
         logger.error("No se pudo inicializar la base de datos al crear la app web.")
