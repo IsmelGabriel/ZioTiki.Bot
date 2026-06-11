@@ -45,4 +45,4 @@ FLASK_PORT = int(os.getenv("FLASK_PORT", 5000))
 DASHBOARD_PASSWORD = os.getenv("DASHBOARD_PASSWORD")
 
 # ── CORS ALLOWED ────────────────────────────────────────────────────
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", None)
+CORS_ORIGINS = [origin.strip() for origin in os.environ.get("CORS_ORIGINS", "").split(",") if origin.strip()] or []
