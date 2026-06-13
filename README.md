@@ -2,7 +2,7 @@
 
 Bot de Discord con inteligencia artificial integrada y comandos de moderación.
 
-**Bot desplegado en:** <https://discord-bot-rh78.onrender.com/>
+**Bot desplegado en:** [ziotiki-bot.onrender.com](https://ziotiki-bot.onrender.com/)
 
 ## Características
 
