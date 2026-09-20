@@ -28,7 +28,7 @@ DB_CONFIG = {
 
 # ── OpenAI ──────────────────────────────────────────────────────────
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5-mini")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-2025-04-14")
 
 # ── Flask ───────────────────────────────────────────────────────────
 _default_secret = os.urandom(32).hex()
