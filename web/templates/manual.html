@@ -136,14 +136,14 @@
             Ziotiki Bot
         </div>
         <ul class="nav-links">
-            <li><a href="/">🏠 <span>Inicio</span></a></li>
-            <li><a href="/status">📡 <span>Estado</span></a></li>
-            <li><a href="/about">ℹ️ <span>Acerca</span></a></li>
+            <li><a href="/">🏠 <span>Home</span></a></li>
+            <li><a href="/status">📡 <span>Status</span></a></li>
+            <li><a href="/about">ℹ️ <span>About</span></a></li>
             <li><a href="/manual" class="active">📖 <span>Manual</span></a></li>
         </ul>
         <div class="nav-status">
             <div class="status-dot" id="nav-dot"></div>
-            <span id="nav-ping-text">Cargando…</span>
+            <span id="nav-ping-text">Loading…</span>
         </div>
     </nav>
 
@@ -152,20 +152,20 @@
 
             <!-- Page header -->
             <div class="page-header">
-                <h1>📖 Manual de uso</h1>
-                <p>Guía completa de todos los comandos disponibles en Ziotiki Bot.</p>
+                <h1>📖 User Manual</h1>
+                <p>Complete guide to all available commands in Ziotiki Bot.</p>
             </div>
 
-            <!-- Prefix banner -->
+            <!-- Command type banner -->
             <div class="prefix-banner">
-                <div class="prefix-key">=</div>
+                <div class="prefix-key">/</div>
                 <div class="prefix-info">
-                    <h3>Prefijo de comandos</h3>
+                    <h3>Slash Commands</h3>
                     <p>
-                        Todos los comandos se ejecutan con el prefijo <code style="color:var(--accent);">=</code>
-                        seguido del nombre del comando.<br>
-                        Ejemplo: <code style="color:var(--warning);">=ping</code> &nbsp;·&nbsp; <code
-                            style="color:var(--warning);">=ask Hola, ¿cómo estás?</code>
+                        All commands are executed using Discord Slash Commands by typing <code style="color:var(--accent);">/</code>
+                        followed by the command name.<br>
+                        Example: <code style="color:var(--warning);">/ping</code> &nbsp;·&nbsp; <code
+                            style="color:var(--warning);">/ask question: Hello, how are you?</code>
                     </p>
                 </div>
             </div>
@@ -175,8 +175,8 @@
                 <div class="manual-section-header">
                     <div class="section-icon blue" style="background:rgba(88,101,242,.2);">⚡</div>
                     <div>
-                        <h2>Referencia rápida</h2>
-                        <p>Todos los comandos de un vistazo</p>
+                        <h2>Quick Reference</h2>
+                        <p>All commands at a glance</p>
                     </div>
                 </div>
 
@@ -184,74 +184,88 @@
                     <table class="quick-ref">
                         <thead>
                             <tr>
-                                <th>Comando</th>
-                                <th>Descripción</th>
-                                <th>Categoría</th>
-                                <th>Permiso</th>
+                                <th>Command</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Permission</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="cmd-cell">=ping</td>
-                                <td>Muestra la latencia del bot</td>
+                                <td class="cmd-cell">/ping</td>
+                                <td>Displays the bot's current latency</td>
                                 <td><span class="badge badge-accent">General</span></td>
-                                <td class="perm-cell">Todos</td>
+                                <td class="perm-cell">Everyone</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=ask</td>
-                                <td>Conversa con la IA (GPT-4.1-mini)</td>
-                                <td><span class="badge badge-purple">IA</span></td>
-                                <td class="perm-cell">Todos</td>
+                                <td class="cmd-cell">/help</td>
+                                <td>Shows command list and help center</td>
+                                <td><span class="badge badge-accent">General</span></td>
+                                <td class="perm-cell">Everyone</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=reset</td>
-                                <td>Borra el historial de conversación con la IA</td>
-                                <td><span class="badge badge-purple">IA</span></td>
-                                <td class="perm-cell">Todos</td>
+                                <td class="cmd-cell">/ask</td>
+                                <td>Chat with the AI assistant</td>
+                                <td><span class="badge badge-purple">AI</span></td>
+                                <td class="perm-cell">Everyone</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=chiste</td>
-                                <td>Envía un chiste aleatorio</td>
+                                <td class="cmd-cell">/reset</td>
+                                <td>Clears your conversation history with the AI</td>
+                                <td><span class="badge badge-purple">AI</span></td>
+                                <td class="perm-cell">Everyone</td>
+                            </tr>
+                            <tr>
+                                <td class="cmd-cell">/joke</td>
+                                <td>Tells a random joke</td>
                                 <td><span class="badge badge-warning"
-                                        style="background:rgba(254,231,92,.15);color:var(--warning);">Diversión</span>
+                                        style="background:rgba(254,231,92,.15);color:var(--warning);">Fun</span>
                                 </td>
-                                <td class="perm-cell">Todos</td>
+                                <td class="perm-cell">Everyone</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=roll</td>
-                                <td>Lanza un dado de 6 caras</td>
+                                <td class="cmd-cell">/roll</td>
+                                <td>Rolls a 6-sided die</td>
                                 <td><span class="badge badge-warning"
-                                        style="background:rgba(254,231,92,.15);color:var(--warning);">Diversión</span>
+                                        style="background:rgba(254,231,92,.15);color:var(--warning);">Fun</span>
                                 </td>
-                                <td class="perm-cell">Todos</td>
+                                <td class="perm-cell">Everyone</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=mute</td>
-                                <td>Silencia a un miembro del servidor</td>
+                                <td class="cmd-cell">/trivia</td>
+                                <td>Starts an interactive trivia question</td>
+                                <td><span class="badge badge-warning"
+                                        style="background:rgba(254,231,92,.15);color:var(--warning);">Trivia</span>
+                                </td>
+                                <td class="perm-cell">Everyone</td>
+                            </tr>
+                            <tr>
+                                <td class="cmd-cell">/mute</td>
+                                <td>Mutes a member in the server</td>
                                 <td><span class="badge badge-danger">Admin</span></td>
                                 <td class="perm-cell">Manage Roles</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=unmute</td>
-                                <td>Quita el silencio a un miembro</td>
+                                <td class="cmd-cell">/unmute</td>
+                                <td>Unmutes a member in the server</td>
                                 <td><span class="badge badge-danger">Admin</span></td>
                                 <td class="perm-cell">Manage Roles</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=kick</td>
-                                <td>Expulsa a un miembro del servidor</td>
+                                <td class="cmd-cell">/kick</td>
+                                <td>Kicks a member from the server</td>
                                 <td><span class="badge badge-danger">Admin</span></td>
                                 <td class="perm-cell">Kick Members</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=ban</td>
-                                <td>Banea a un miembro del servidor</td>
+                                <td class="cmd-cell">/ban</td>
+                                <td>Bans a member from the server</td>
                                 <td><span class="badge badge-danger">Admin</span></td>
                                 <td class="perm-cell">Ban Members</td>
                             </tr>
                             <tr>
-                                <td class="cmd-cell">=setprompt</td>
-                                <td>Configura el prompt de IA del servidor</td>
+                                <td class="cmd-cell">/setprompt</td>
+                                <td>Configures a custom AI system prompt for the server</td>
                                 <td><span class="badge badge-danger">Admin</span></td>
                                 <td class="perm-cell">Administrator</td>
                             </tr>
@@ -265,72 +279,69 @@
                 <div class="manual-section-header">
                     <div class="section-icon blue" style="background:rgba(88,101,242,.2);">📡</div>
                     <div>
-                        <h2>Comandos generales</h2>
-                        <p>Utilidades básicas disponibles para todos los usuarios</p>
+                        <h2>General Commands</h2>
+                        <p>Basic utilities available to all members</p>
                     </div>
                 </div>
 
                 <div class="cmd-grid">
                     <div class="cmd-card">
-                        <div class="cmd-name">=ping</div>
-                        <div class="cmd-description">Verifica que el bot está activo y muestra su latencia actual en
-                            milisegundos.</div>
-                        <div class="cmd-usage">=ping</div>
+                        <div class="cmd-name">/ping</div>
+                        <div class="cmd-description">Verifies that the bot is active and displays its current latency in milliseconds.</div>
+                        <div class="cmd-usage">/ping</div>
                         <div class="cmd-meta">
-                            <span class="badge badge-success">✅ Sin permisos</span>
+                            <span class="badge badge-success">✅ No permissions needed</span>
                             <span class="badge badge-accent">General</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ── IA ── -->
+            <!-- ── AI ── -->
             <div class="manual-section">
                 <div class="manual-section-header">
                     <div class="section-icon purple" style="background:rgba(124,58,237,.2);">🧠</div>
                     <div>
-                        <h2>Inteligencia Artificial</h2>
-                        <p>Conversación natural potenciada por GPT-4.1-mini con memoria contextual</p>
+                        <h2>Artificial Intelligence</h2>
+                        <p>Natural conversations powered by AI with contextual memory</p>
                     </div>
                 </div>
 
                 <div class="alert alert-info">
                     <span class="alert-icon">💡</span>
-                    <span>La IA recuerda tu historial de conversación <strong>por servidor</strong>. Usa
-                        <code>=reset</code> para empezar desde cero. Cooldown de 10 segundos por usuario.</span>
+                    <span>The AI remembers your conversation history <strong>per server</strong>. Use
+                        <code>/reset</code> to start fresh. 10-second cooldown per user.</span>
                 </div>
 
                 <div class="cmd-grid">
                     <div class="cmd-card">
-                        <div class="cmd-name">=ask</div>
+                        <div class="cmd-name">/ask</div>
                         <div class="cmd-description">
-                            Envía una pregunta o mensaje a la IA. Recuerda el contexto de conversaciones anteriores
-                            contigo en este servidor.
-                            Límite de 300 caracteres por mensaje.
+                            Send a question or prompt to the AI. It remembers the context of previous messages with you in this server.
+                            Limit of 300 characters per message.
                         </div>
-                        <div class="cmd-usage">=ask <span class="param">&lt;pregunta&gt;</span></div>
+                        <div class="cmd-usage">/ask <span class="param">&lt;question&gt;</span></div>
                         <div class="cmd-meta">
-                            <span class="badge badge-success">✅ Sin permisos</span>
+                            <span class="badge badge-success">✅ No permissions needed</span>
                             <span class="badge badge-purple">⏱ Cooldown 10s</span>
                         </div>
                     </div>
                     <div class="cmd-card">
-                        <div class="cmd-name">=reset</div>
+                        <div class="cmd-name">/reset</div>
                         <div class="cmd-description">
-                            Borra todo el historial de conversación con la IA para tu usuario en este servidor.
-                            Útil para cambiar de tema o empezar una conversación desde cero.
+                            Clears all conversation history with the AI for your user in this server.
+                            Useful to switch topics or start a new conversation.
                         </div>
-                        <div class="cmd-usage">=reset</div>
+                        <div class="cmd-usage">/reset</div>
                         <div class="cmd-meta">
-                            <span class="badge badge-success">✅ Sin permisos</span>
+                            <span class="badge badge-success">✅ No permissions needed</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="tip">
                     <span>🌟</span>
-                    <span><strong>Consejo:</strong> Puedes conversar de forma natural. La IA recuerda lo que hablaron
-                        anteriormente, así que no necesitas repetir el contexto en cada mensaje.</span>
+                    <span><strong>Tip:</strong> You can chat naturally. The AI remembers past interactions, so you do not need to repeat context in every message.</span>
                 </div>
             </div>
 
@@ -339,32 +350,30 @@
                 <div class="manual-section-header">
                     <div class="section-icon yellow" style="background:rgba(254,231,92,.2);">🎉</div>
                     <div>
-                        <h2>Diversión</h2>
-                        <p>Comandos de entretenimiento para animar el servidor</p>
+                        <h2>Fun & Entertainment</h2>
+                        <p>Entertainment commands to engage the server</p>
                     </div>
                 </div>
 
                 <div class="cmd-grid">
                     <div class="cmd-card">
-                        <div class="cmd-name">=chiste</div>
+                        <div class="cmd-name">/joke</div>
                         <div class="cmd-description">
-                            El bot envía un chiste aleatorio de su repertorio. Perfecto para romper el hielo o hacer
-                            reír al servidor.
+                            The bot shares a random joke from its collection. Great for breaking the ice or sharing a laugh.
                         </div>
-                        <div class="cmd-usage">=chiste</div>
+                        <div class="cmd-usage">/joke</div>
                         <div class="cmd-meta">
-                            <span class="badge badge-success">✅ Sin permisos</span>
+                            <span class="badge badge-success">✅ No permissions needed</span>
                         </div>
                     </div>
                     <div class="cmd-card">
-                        <div class="cmd-name">=roll</div>
+                        <div class="cmd-name">/roll</div>
                         <div class="cmd-description">
-                            Lanza un dado virtual de 6 caras. El bot responde con un número del 1 al 6. Útil para
-                            sorteos, decisiones o juegos.
+                            Rolls a 6-sided virtual die. Returns a number from 1 to 6. Useful for giveaways or decisions.
                         </div>
-                        <div class="cmd-usage">=roll</div>
+                        <div class="cmd-usage">/roll</div>
                         <div class="cmd-meta">
-                            <span class="badge badge-success">✅ Sin permisos</span>
+                            <span class="badge badge-success">✅ No permissions needed</span>
                         </div>
                     </div>
                 </div>
@@ -375,79 +384,73 @@
                 <div class="manual-section-header">
                     <div class="section-icon red" style="background:rgba(237,66,69,.2);">🛡️</div>
                     <div>
-                        <h2>Moderación (Admin)</h2>
-                        <p>Herramientas para moderadores y administradores del servidor</p>
+                        <h2>Moderation (Admin)</h2>
+                        <p>Tools for server moderators and administrators</p>
                     </div>
                 </div>
 
                 <div class="alert alert-warn">
                     <span class="alert-icon">⚠️</span>
                     <span>
-                        Estos comandos respetan la <strong>jerarquía de roles</strong>.
-                        No puedes moderar a alguien con un rol igual o superior al tuyo, ni al dueño del servidor, ni al
-                        bot.
+                        These commands enforce <strong>role hierarchy</strong>.
+                        You cannot moderate someone with a role equal to or higher than yours, the server owner, or the bot itself.
                     </span>
                 </div>
 
                 <div class="cmd-grid">
 
                     <div class="cmd-card">
-                        <div class="cmd-name">=mute</div>
+                        <div class="cmd-name">/mute</div>
                         <div class="cmd-description">
-                            Silencia a un miembro del servidor. Si no existe el rol <em>MemMuted</em>, el bot lo crea
-                            automáticamente con los permisos necesarios.
+                            Mutes a server member. If the <em>MemMuted</em> role does not exist, the bot creates it automatically with appropriate channel permissions.
                         </div>
-                        <div class="cmd-usage">=mute <span class="param">&lt;@miembro&gt;</span></div>
+                        <div class="cmd-usage">/mute <span class="param">&lt;member&gt;</span></div>
                         <div class="cmd-meta">
                             <span class="badge badge-danger">🔒 Manage Roles</span>
                         </div>
                     </div>
 
                     <div class="cmd-card">
-                        <div class="cmd-name">=unmute</div>
+                        <div class="cmd-name">/unmute</div>
                         <div class="cmd-description">
-                            Quita el silencio a un miembro previamente mutado. Si el miembro no tiene el rol de mute, el
-                            bot lo notifica.
+                            Removes mute from a previously muted member.
                         </div>
-                        <div class="cmd-usage">=unmute <span class="param">&lt;@miembro&gt;</span></div>
+                        <div class="cmd-usage">/unmute <span class="param">&lt;member&gt;</span></div>
                         <div class="cmd-meta">
                             <span class="badge badge-danger">🔒 Manage Roles</span>
                         </div>
                     </div>
 
                     <div class="cmd-card">
-                        <div class="cmd-name">=kick</div>
+                        <div class="cmd-name">/kick</div>
                         <div class="cmd-description">
-                            Expulsa a un miembro del servidor. El miembro puede volver si tiene un link de invitación.
-                            Se puede agregar razón opcional.
+                            Kicks a member from the server. An optional reason can be attached.
                         </div>
-                        <div class="cmd-usage">=kick <span class="param">&lt;@miembro&gt;</span> <span
-                                class="param optional">[razón]</span></div>
+                        <div class="cmd-usage">/kick <span class="param">&lt;member&gt;</span> <span
+                                class="param optional">[reason]</span></div>
                         <div class="cmd-meta">
                             <span class="badge badge-danger">🔒 Kick Members</span>
                         </div>
                     </div>
 
                     <div class="cmd-card">
-                        <div class="cmd-name">=ban</div>
+                        <div class="cmd-name">/ban</div>
                         <div class="cmd-description">
-                            Banea a un miembro del servidor de forma permanente. No podrá volver por ningún link de
-                            invitación. Se puede agregar razón opcional.
+                            Permanently bans a member from the server. An optional reason can be attached.
                         </div>
-                        <div class="cmd-usage">=ban <span class="param">&lt;@miembro&gt;</span> <span
-                                class="param optional">[razón]</span></div>
+                        <div class="cmd-usage">/ban <span class="param">&lt;member&gt;</span> <span
+                                class="param optional">[reason]</span></div>
                         <div class="cmd-meta">
                             <span class="badge badge-danger">🔒 Ban Members</span>
                         </div>
                     </div>
 
                     <div class="cmd-card">
-                        <div class="cmd-name">=setprompt</div>
+                        <div class="cmd-name">/setprompt</div>
                         <div class="cmd-description">
-                            Configura un prompt personalizado para la IA en este servidor. Define la personalidad, el
-                            idioma, y el comportamiento de la IA.
+                            Configures a custom AI prompt for this server, defining the persona, tone, and guidelines for the AI.
                         </div>
-                        <div class="cmd-usage">=setprompt <span class="param">&lt;nuevo prompt&gt;</span></div>
+                        <div class="cmd-usage">/setprompt <span class="param">&lt;new_prompt&gt;</span></div>
                         <div class="cmd-meta">
                             <span class="badge badge-danger">🔒 Administrator</span>
                         </div>
@@ -466,42 +469,36 @@
                 </div>
             </div><!-- /admin -->
 
-            <!-- ── Convenciones ── -->
+            <!-- ── Conventions ── -->
             <div class="manual-section">
                 <div class="manual-section-header">
                     <div class="section-icon green" style="background:rgba(87,242,135,.2);">📌</div>
                     <div>
-                        <h2>Convenciones de esta guía</h2>
-                        <p>Cómo leer la sintaxis de los comandos</p>
+                        <h2>Guide Conventions</h2>
+                        <p>How to interpret command syntax</p>
                     </div>
                 </div>
                 <div class="card" style="transition:none; transform:none;">
                     <ul class="info-list">
                         <li>
-                            <code class="param">&lt;argumento&gt;</code>
+                            <code class="param">&lt;argument&gt;</code>
                             <span class="lbl" style="min-width:10px"></span>
-                            <span>Argumento <strong>obligatorio</strong>. Debes proporcionarlo.</span>
+                            <span><strong>Required</strong> argument. Must be provided.</span>
                         </li>
                         <li>
-                            <code class="param optional">[argumento]</code>
+                            <code class="param optional">[argument]</code>
                             <span class="lbl" style="min-width:10px"></span>
-                            <span>Argumento <strong>opcional</strong>. Puede omitirse.</span>
+                            <span><strong>Optional</strong> argument. Can be omitted.</span>
                         </li>
                         <li>
                             <span>🔒</span>
                             <span class="lbl" style="min-width:10px"></span>
-                            <span>Indica el <strong>permiso mínimo</strong> requerido para ejecutar el comando.</span>
+                            <span>Indicates the <strong>minimum Discord permission</strong> required to run the command.</span>
                         </li>
                         <li>
                             <span>⏱</span>
                             <span class="lbl" style="min-width:10px"></span>
-                            <span>El comando tiene un <strong>cooldown</strong> (tiempo de espera) entre usos.</span>
-                        </li>
-                        <li>
-                            <span>@</span>
-                            <span class="lbl" style="min-width:10px"></span>
-                            <span>Debes mencionar al usuario con <strong>@</strong> o escribir su nombre de
-                                usuario.</span>
+                            <span>The command has a <strong>cooldown</strong> between uses.</span>
                         </li>
                     </ul>
                 </div>

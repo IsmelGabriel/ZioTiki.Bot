@@ -7,20 +7,20 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="chiste", description="Cuenta un chiste aleatorio")
+    @app_commands.command(name="joke", description="Tell a random joke")
     async def joke(self, interaction: discord.Interaction):
         jokes = [
-            "¿Por qué el libro de matemáticas estaba triste? ¡Porque tenía muchos problemas!",
-            "¿Qué le dijo un pez a otro pez? ¡Nada!",
-            "¿Por qué los pájaros no usan Facebook? ¡Porque ya tienen Twitter!"
+            "Why was the math book sad? Because it had too many problems!",
+            "What did one ocean say to the other ocean? Nothing, they just waved!",
+            "Why don't scientists trust atoms? Because they make up everything!"
         ]
         joke = random.choice(jokes)
         await interaction.response.send_message(joke)
 
-    @app_commands.command(name="roll", description="Lanza un dado de 6 caras")
+    @app_commands.command(name="roll", description="Roll a 6-sided die")
     async def roll(self, interaction: discord.Interaction):
         result = random.randint(1, 6)
-        await interaction.response.send_message(f"Has lanzado un dado y ha salido: {result}")
+        await interaction.response.send_message(f"You rolled a die and got: {result}")
 
 async def setup(bot):
     await bot.add_cog(Fun(bot))

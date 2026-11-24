@@ -9,25 +9,25 @@ class HelpCommand(commands.Cog):
         self.bot = bot
 
     CATEGORIES = {
-        "General": {"emoji": "📊", "color": discord.Color.blue(), "description": "Comandos generales del bot"},
-        "Fun": {"emoji": "🎮", "color": discord.Color.magenta(), "description": "Comandos divertidos y entretenimiento"},
-        "Admin": {"emoji": "🛡️", "color": discord.Color.red(), "description": "Comandos de administración y moderación"},
-        "IA": {"emoji": "🤖", "color": discord.Color.green(), "description": "Inteligencia Artificial y conversaciones"},
-        "Trivia": {"emoji": "🎯", "color": discord.Color.gold(), "description": "Juego de preguntas y respuestas"},
+        "General": {"emoji": "📊", "color": discord.Color.blue(), "description": "General bot commands"},
+        "Fun": {"emoji": "🎮", "color": discord.Color.magenta(), "description": "Fun and entertainment commands"},
+        "Admin": {"emoji": "🛡️", "color": discord.Color.red(), "description": "Administration and moderation commands"},
+        "IA": {"emoji": "🤖", "color": discord.Color.green(), "description": "Artificial Intelligence and conversations"},
+        "Trivia": {"emoji": "🎯", "color": discord.Color.gold(), "description": "Trivia question and answer game"},
     }
 
     def _get_category_config(self, cog_name: str) -> dict:
         return self.CATEGORIES.get(cog_name, {
-            "emoji": "📁", "color": discord.Color.greyple(), "description": "Otros comandos"
+            "emoji": "📁", "color": discord.Color.greyple(), "description": "Other commands"
         })
 
-    @app_commands.command(name="help", description="Muestra la ayuda y lista de comandos del bot.")
+    @app_commands.command(name="help", description="Displays help and command list for the bot.")
     async def help_command(self, interaction: discord.Interaction):
         embed = discord.Embed(
-            title="📚 Centro de Ayuda",
+            title="📚 Help Center",
             description=(
-                f"¡Hola **{interaction.user.display_name}**! El bot ahora funciona con Slash Commands.\n\n"
-                f"**Tip:** Simplemente escribe `/` en el chat y aparecerá la lista de comandos disponibles, agrupados visualmente por Discord.\n"
+                f"Hello **{interaction.user.display_name}**! The bot now uses Slash Commands.\n\n"
+                f"**Tip:** Simply type `/` in chat to see all available commands, grouped visually by Discord.\n"
             ),
             color=discord.Color.blurple(),
         )
@@ -51,7 +51,7 @@ class HelpCommand(commands.Cog):
             )
 
         embed.set_footer(
-            text=f"Solicitado por {interaction.user.display_name}",
+            text=f"Requested by {interaction.user.display_name}",
             icon_url=interaction.user.display_avatar.url,
         )
         embed.set_thumbnail(url=self.bot.user.display_avatar.url)

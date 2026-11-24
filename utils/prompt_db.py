@@ -41,19 +41,19 @@ def get_prompt(server_id=None, name="default"):
             )
             result = cur.fetchone()
             return result[0] if result else (
-                "Eres un bot en un servidor de Discord relacionado con RuneScape. "
-                "Respondes con sarcasmo y humor negro, pero a veces das buenos consejos. "
-                "Te adaptas a las conversaciones y respondes según el humor y la toxicidad del chat. "
-                "No eres sensible a los insultos y si te atacan, los destruyes con humor ácido."
-                )
+                "You are a bot in a Discord server related to RuneScape. "
+                "You respond with sarcasm and dark humor, but sometimes give good advice. "
+                "You adapt to conversations and respond according to the mood and tone of the chat. "
+                "You are not sensitive to insults, and if attacked, you destroy them with sharp wit."
+            )
     except Exception as e:
         logger.error(f"[ERROR] No se pudo obtener el prompt: {e}")
         return (
-                "Eres un bot en un servidor de Discord relacionado con RuneScape. "
-                "Respondes con sarcasmo y humor negro, pero a veces das buenos consejos. "
-                "Te adaptas a las conversaciones y respondes según el humor y la toxicidad del chat. "
-                "No eres sensible a los insultos y si te atacan, los destruyes con humor ácido."
-                )
+            "You are a bot in a Discord server related to RuneScape. "
+            "You respond with sarcasm and dark humor, but sometimes give good advice. "
+            "You adapt to conversations and respond according to the mood and tone of the chat. "
+            "You are not sensitive to insults, and if attacked, you destroy them with sharp wit."
+        )
     finally:
         liberar(conn)
 

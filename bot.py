@@ -117,8 +117,7 @@ async def on_message(message):
                         user_id=message.author.id,
                     )
                     await message.channel.send(
-                        "El sistema de IA no esta disponible en este "
-                        "momento o se encuentra en mantenimiento!"
+                        "The AI system is currently unavailable or under maintenance!"
                     )
 
     await bot.process_commands(message)

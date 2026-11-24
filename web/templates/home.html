@@ -17,14 +17,14 @@
             Ziotiki Bot
         </div>
         <ul class="nav-links">
-            <li><a href="/" class="active">🏠 <span>Inicio</span></a></li>
-            <li><a href="/status">📡 <span>Estado</span></a></li>
-            <li><a href="/about">ℹ️ <span>Acerca</span></a></li>
+            <li><a href="/" class="active">🏠 <span>Home</span></a></li>
+            <li><a href="/status">📡 <span>Status</span></a></li>
+            <li><a href="/about">ℹ️ <span>About</span></a></li>
             <li><a href="/manual">📖 <span>Manual</span></a></li>
         </ul>
         <div class="nav-status">
             <div class="status-dot" id="nav-dot"></div>
-            <span id="nav-status-text">Cargando…</span>
+            <span id="nav-status-text">Loading…</span>
         </div>
     </nav>
 
@@ -33,13 +33,13 @@
         <div class="hero">
             <div class="hero-avatar">🤖</div>
             <h1>Ziotiki Bot</h1>
-            <p>Tu asistente inteligente para Discord. Moderación, diversión e IA — todo en uno.</p>
+            <p>Your intelligent Discord assistant. Moderation, fun, and AI — all in one.</p>
             <div class="hero-actions">
                 <a href="https://discord.com/oauth2/authorize?client_id=1318670732380864554&permissions=8&scope=bot"
                     target="_blank" rel="noopener" class="btn btn-primary">
-                    ➕ Invitar al servidor
+                    ➕ Invite to Server
                 </a>
-                <a href="/manual" class="btn btn-outline">📖 Ver comandos</a>
+                <a href="/manual" class="btn btn-outline">📖 View Commands</a>
             </div>
         </div>
     </div>
@@ -61,14 +61,14 @@
                     <div class="stat-icon blue">🔵</div>
                     <div class="stat-info">
                         <div class="stat-value" id="stat-status">—</div>
-                        <div class="stat-label">Estado del bot</div>
+                        <div class="stat-label">Bot Status</div>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon purple">⏰</div>
                     <div class="stat-info">
                         <div class="stat-value" id="stat-restart" style="font-size:.95rem;">—</div>
-                        <div class="stat-label">Último reinicio</div>
+                        <div class="stat-label">Last Restart</div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -76,36 +76,33 @@
                     <div class="stat-info">
                         <div class="stat-value" id="stat-activity" style="font-size:.9rem; word-break:break-word;">—
                         </div>
-                        <div class="stat-label">Actividad actual</div>
+                        <div class="stat-label">Current Activity</div>
                     </div>
                 </div>
             </div>
 
             <!-- Features -->
-            <div class="section-title">✨ <span>Características</span></div>
+            <div class="section-title">✨ <span>Features</span></div>
             <div class="features-grid" style="margin-bottom:2.5rem;">
                 <div class="feature-card">
                     <div class="feature-icon blue">🧠</div>
-                    <h3>Inteligencia Artificial</h3>
-                    <p>Conversa con GPT-4.1-mini directamente desde Discord. El bot recuerda el contexto de tu
-                        conversación.</p>
+                    <h3>Artificial Intelligence</h3>
+                    <p>Chat with AI directly from Discord. The bot remembers your conversation context.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon red">🛡️</div>
-                    <h3>Moderación</h3>
-                    <p>Herramientas para silenciar, expulsar y banear miembros. Mantén tu servidor en orden fácilmente.
-                    </p>
+                    <h3>Moderation</h3>
+                    <p>Tools to mute, kick, and ban members. Keep your server organized and safe easily.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon yellow">🎉</div>
-                    <h3>Diversión</h3>
-                    <p>Comandos de entretenimiento: chistes aleatorios, lanzamiento de dados y más para animar el
-                        servidor.</p>
+                    <h3>Fun & Trivia</h3>
+                    <p>Entertainment commands: jokes, dice rolls, and trivia to engage your community.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon purple">🔧</div>
-                    <h3>Personalizable</h3>
-                    <p>Los administradores pueden configurar un prompt de IA personalizado para cada servidor.</p>
+                    <h3>Customizable</h3>
+                    <p>Server administrators can set custom AI prompts tailored to their server.</p>
                 </div>
             </div>
 
@@ -114,14 +111,14 @@
 
                 <!-- Error logs -->
                 <div>
-                    <div class="section-title">⚠️ <span>Últimos errores</span></div>
+                    <div class="section-title">⚠️ <span>Recent Errors</span></div>
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Tipo</th>
-                                    <th>Mensaje</th>
-                                    <th>Fecha</th>
+                                    <th>Type</th>
+                                    <th>Message</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -129,16 +126,13 @@
                                 {% for log in error_logs %}
                                 <tr>
                                     <td><span class="badge badge-danger">{{ log.get('error_type','?') }}</span></td>
-                                    <td class="td-truncate">{{ log.error_message[:60] }}{% if log.error_message|length >
-                                        60 %}…{% endif %}</td>
-                                    <td style="white-space:nowrap; color:var(--text-muted); font-size:.8rem;">{{
-                                        log.created_at }}</td>
+                                    <td class="td-truncate">{{ log.error_message[:60] }}{% if log.error_message|length > 60 %}…{% endif %}</td>
+                                    <td style="white-space:nowrap; color:var(--text-muted); font-size:.8rem;">{{ log.created_at }}</td>
                                 </tr>
                                 {% endfor %}
                                 {% else %}
                                 <tr>
-                                    <td colspan="3" style="text-align:center; color:var(--text-muted);">✅ Sin errores
-                                        registrados</td>
+                                    <td colspan="3" style="text-align:center; color:var(--text-muted);">✅ No errors recorded</td>
                                 </tr>
                                 {% endif %}
                             </tbody>
@@ -148,14 +142,14 @@
 
                 <!-- Prompt updates -->
                 <div>
-                    <div class="section-title">💬 <span>Últimos prompts</span></div>
+                    <div class="section-title">💬 <span>Recent Prompts</span></div>
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Servidor</th>
-                                    <th>Nombre</th>
-                                    <th>Actualizado</th>
+                                    <th>Server</th>
+                                    <th>Name</th>
+                                    <th>Updated</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -164,14 +158,12 @@
                                 <tr>
                                     <td class="td-mono">{{ prompt.server_id }}</td>
                                     <td><strong>{{ prompt.name }}</strong></td>
-                                    <td style="white-space:nowrap; color:var(--text-muted); font-size:.8rem;">{{
-                                        prompt.updated_at }}</td>
+                                    <td style="white-space:nowrap; color:var(--text-muted); font-size:.8rem;">{{ prompt.updated_at }}</td>
                                 </tr>
                                 {% endfor %}
                                 {% else %}
                                 <tr>
-                                    <td colspan="3" style="text-align:center; color:var(--text-muted);">Sin
-                                        actualizaciones</td>
+                                    <td colspan="3" style="text-align:center; color:var(--text-muted);">No updates</td>
                                 </tr>
                                 {% endif %}
                             </tbody>

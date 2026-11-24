@@ -34,10 +34,10 @@ async def generate_response(server_id: int, user_id: int, prompt: str) -> str:
         )
     except RateLimitError:
         logger.warning("OpenAI rate limit reached for server=%s user=%s", server_id, user_id)
-        return "⚠️ El sistema de IA está recibiendo muchas solicitudes. Intenta de nuevo en unos segundos."
+        return "⚠️ The AI system is receiving too many requests. Please try again in a few seconds."
     except APITimeoutError:
         logger.warning("OpenAI timeout for server=%s user=%s", server_id, user_id)
-        return "⚠️ La respuesta de IA tardó demasiado. Intenta de nuevo."
+        return "⚠️ The AI response took too long. Please try again."
     except APIError as e:
         logger.error("OpenAI API error for server=%s user=%s: %s", server_id, user_id, e)
         raise

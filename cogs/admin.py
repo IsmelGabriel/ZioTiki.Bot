@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from utils.prompt_db import update_prompt
+from bot import bot
 
 class Admin(commands.Cog):
     def __init__(self, bot):
@@ -10,13 +11,13 @@ class Admin(commands.Cog):
     def _can_moderate(self, interaction: discord.Interaction, member: discord.Member) -> str | None:
         """Returns an error message if author cannot moderate member, else None."""
         if member == interaction.user:
-            return "No puedes usar este comando sobre ti mismo."
+            return "You cannot use this command on yourself."
         if member == interaction.guild.me:
-            return "No puedes usar este comando sobre el bot."
+            return "You cannot use this command on the bot."
         if member == interaction.guild.owner:
-            return "No puedes usar este comando sobre el dueño del servidor."
+            return "You cannot use this command on the server owner."
         if interaction.user.top_role <= member.top_role and interaction.user != interaction.guild.owner:
-            return "No puedes moderar a alguien con un rol igual o superior al tuyo."
+            return "You cannot moderate someone with a role equal to or higher than yours."
         return None
 
     @app_commands.command(name="mute", description="Mute a user from server")
@@ -84,52 +85,52 @@ class Admin(commands.Cog):
         server_id = interaction.guild_id if interaction.guild else None
         server_name = interaction.guild.name if interaction.guild else "Direct Message"
         if update_prompt(server_id, server_name, new_prompt):
-            await interaction.response.send_message("✅ Prompt actualizado para este servidor.")
+            await interaction.response.send_message("✅ Prompt updated for this server.")
         else:
-            await interaction.response.send_message("❌ Error al actualizar el prompt.", ephemeral=True)
+            await interaction.response.send_message("❌ Error updating the prompt.", ephemeral=True)
 
-    @app_commands.command(name="update_announce", description="(Owner Only) Anuncia una actualización en todos los servidores.")
-    async def update_announce(self, interaction: discord.Interaction, version: str, notas: str):
-        # 1. Verificar que SOLO el dueño del bot pueda usar esto
+    @app_commands.command(name="update_announce", description="(Owner Only) Announce an update across all servers.")
+    async def update_announce(self, interaction: discord.Interaction, version: str, notes: str):
+        # 1. Verify that ONLY the bot owner can use this
         is_owner = await self.bot.is_owner(interaction.user)
         if not is_owner:
-            await interaction.response.send_message("❌ Solo el dueño del bot puede usar este comando.", ephemeral=True)
+            await interaction.response.send_message("❌ Only the bot owner can use this command.", ephemeral=True)
             return
 
         await interaction.response.defer(ephemeral=True)
 
-        # 2. Crear la tarjeta de anuncio
-        notas_formateadas = notas.replace("\\n", "\n")
+        # 2. Create announcement embed
+        formatted_notes = notes.replace("\\n", "\n")
 
         embed = discord.Embed(
-            title=f"🚀 Actualización del Sistema: v{version}",
-            description=f"**Notas del parche:**\n{notas_formateadas}",
+            title=f"🚀 System Update: v{version}",
+            description=f"**Patch notes:**\n{formatted_notes}",
             color=discord.Color.brand_red()
         )
         embed.set_footer(text="ZioTiki Bot Core Update")
 
         servers_notified = 0
 
-        # 3. Iterar por todos los servidores
+        # 3. Iterate through all guilds
         for guild in self.bot.guilds:
             target_channel = guild.system_channel
 
             if target_channel is None:
                 for c in guild.text_channels:
-                    # Busca el mejor canal para anunciarlo
-                    if any(palabra in c.name.lower() for palabra in ["actualizaciones", "noticias", "admin", "general"]):
+                    # Find best channel to announce
+                    if any(word in c.name.lower() for word in ["updates", "announcements", "news", "admin", "general", "actualizaciones", "noticias"]):
                         target_channel = c
                         break
 
-            # 4. Enviar el mensaje si encontró un canal donde tenga permisos
+            # 4. Send message if channel is found and bot has permissions
             if target_channel:
                 try:
                     await target_channel.send(embed=embed)
                     servers_notified += 1
                 except discord.Forbidden:
-                    pass # El bot no tiene permisos de escritura en ese canal
+                    pass # Bot lacks permission to send messages in this channel
 
-        await interaction.followup.send(f"✅ Anuncio de actualización (v{version}) enviado exitosamente a **{servers_notified}** servidores.")
+        await interaction.followup.send(f"✅ Update announcement (v{version}) successfully sent to **{servers_notified}** servers.")
 
 async def setup(bot):
     await bot.add_cog(Admin(bot))

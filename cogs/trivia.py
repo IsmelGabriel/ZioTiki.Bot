@@ -29,72 +29,75 @@ class Trivia(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ── Comandos de administrador ─────────────────────────────────────────────
-    @app_commands.command(name="trivia_add", description="[Admin] Agrega una pregunta. d: facil/medio/dificil")
+    # ── Admin commands ────────────────────────────────────────────────────────
+    @app_commands.command(name="trivia_add", description="[Admin] Add a trivia question. d: easy/medium/hard")
     @app_commands.checks.has_permissions(administrator=True)
-    async def trivia_add(self, interaction: discord.Interaction, dificultad: str, pregunta: str, respuesta: str):
-        if get_difficulty_points(dificultad.lower()) is None:
+    async def trivia_add(self, interaction: discord.Interaction, difficulty: str, question: str, answer: str):
+        diff_map = {"easy": "facil", "medium": "medio", "hard": "dificil"}
+        diff_key = diff_map.get(difficulty.lower(), difficulty.lower())
+
+        if get_difficulty_points(diff_key) is None:
             diffs = ", ".join(f"`{d['name']}`" for d in get_difficulties())
-            await interaction.response.send_message(f"❌ Dificultad `{dificultad}` no existe. Opciones: {diffs}", ephemeral=True)
+            await interaction.response.send_message(f"❌ Difficulty `{difficulty}` does not exist. Options: {diffs}", ephemeral=True)
             return
 
-        if len(pregunta) < 5:
-            await interaction.response.send_message("❌ La pregunta es demasiado corta.", ephemeral=True)
+        if len(question) < 5:
+            await interaction.response.send_message("❌ The question is too short.", ephemeral=True)
             return
 
-        if len(respuesta) < 1:
-            await interaction.response.send_message("❌ La respuesta no puede estar vacía.", ephemeral=True)
+        if len(answer) < 1:
+            await interaction.response.send_message("❌ The answer cannot be empty.", ephemeral=True)
             return
 
-        if add_question(interaction.guild_id, pregunta, respuesta, dificultad.lower(), interaction.user.id):
-            points = get_difficulty_points(dificultad.lower())
+        if add_question(interaction.guild_id, question, answer, diff_key, interaction.user.id):
+            points = get_difficulty_points(diff_key)
             await interaction.response.send_message(
-                f"✅ Pregunta registrada.\n"
-                f"**Dificultad:** {dificultad.lower()} ({points} pts)\n"
-                f"**Q:** {pregunta}\n"
-                f"**R:** ||{respuesta}||"
+                f"✅ Question registered.\n"
+                f"**Difficulty:** {difficulty.lower()} ({points} pts)\n"
+                f"**Q:** {question}\n"
+                f"**A:** ||{answer}||"
             )
         else:
-            await interaction.response.send_message("❌ Error al registrar la pregunta. Inténtalo de nuevo.", ephemeral=True)
+            await interaction.response.send_message("❌ Error registering the question. Please try again.", ephemeral=True)
 
-    @app_commands.command(name="trivia_del", description="[Admin] Elimina una pregunta por ID.")
+    @app_commands.command(name="trivia_del", description="[Admin] Delete a question by ID.")
     @app_commands.checks.has_permissions(administrator=True)
     async def trivia_del(self, interaction: discord.Interaction, question_id: int):
         if delete_question(question_id, interaction.guild_id):
-            await interaction.response.send_message(f"🗑️ Pregunta `#{question_id}` eliminada.")
+            await interaction.response.send_message(f"🗑️ Question `#{question_id}` deleted.")
         else:
-            await interaction.response.send_message(f"❌ No se encontró la pregunta `#{question_id}` en este servidor.", ephemeral=True)
+            await interaction.response.send_message(f"❌ Question `#{question_id}` was not found in this server.", ephemeral=True)
 
-    @app_commands.command(name="trivia_list", description="[Admin] Lista las últimas 10 preguntas registradas.")
+    @app_commands.command(name="trivia_list", description="[Admin] List the last 10 registered questions.")
     @app_commands.checks.has_permissions(administrator=True)
     async def trivia_list(self, interaction: discord.Interaction):
         questions = list_questions(interaction.guild_id)
         if not questions:
-            await interaction.response.send_message("📭 No hay preguntas registradas en este servidor.", ephemeral=True)
+            await interaction.response.send_message("📭 There are no questions registered in this server.", ephemeral=True)
             return
 
         lines = [f"`#{q['id']}` [{q['difficulty']}] {q['question']}" for q in questions]
         embed = discord.Embed(
-            title="📋 Preguntas de Trivia",
+            title="📋 Trivia Questions",
             description="\n".join(lines),
             color=discord.Color.blue(),
         )
-        embed.set_footer(text=f"Total: {get_question_count(interaction.guild_id)} preguntas")
+        embed.set_footer(text=f"Total: {get_question_count(interaction.guild_id)} questions")
         await interaction.response.send_message(embed=embed)
 
-    # ── Comandos de juego ─────────────────────────────────────────────────────
+    # ── Game commands ─────────────────────────────────────────────────────────
 
-    @app_commands.command(name="trivia", description="Inicia una pregunta de trivia.")
+    @app_commands.command(name="trivia", description="Start a trivia question.")
     async def trivia(self, interaction: discord.Interaction):
         if interaction.channel_id in _active_games:
-            await interaction.response.send_message("⚠️ Ya hay una pregunta activa en este canal. ¡Respóndela primero!", ephemeral=True)
+            await interaction.response.send_message("⚠️ There is already an active question in this channel. Answer it first!", ephemeral=True)
             return
 
         question = get_random_question(interaction.guild_id)
         if not question:
             await interaction.response.send_message(
-                "📭 No hay preguntas registradas en este servidor.\n"
-                "Contacta a un administrador para que agregue algunas.", ephemeral=True
+                "📭 There are no questions registered in this server.\n"
+                "Contact an administrator to add some.", ephemeral=True
             )
             return
 
@@ -105,8 +108,8 @@ class Trivia(commands.Cog):
             description=question["question"],
             color=discord.Color.gold(),
         )
-        embed.add_field(name="Dificultad", value=f"{question['difficulty']} (+{question['points']} pts)")
-        embed.set_footer(text=f"Tienes {ANSWER_TIMEOUT} segundos para responder en el chat.")
+        embed.add_field(name="Difficulty", value=f"{question['difficulty']} (+{question['points']} pts)")
+        embed.set_footer(text=f"You have {ANSWER_TIMEOUT} seconds to answer in chat.")
         await interaction.response.send_message(embed=embed)
 
         def check(msg: discord.Message) -> bool:
@@ -124,57 +127,57 @@ class Trivia(commands.Cog):
             total = get_user_points(interaction.guild_id, msg.author.id)
 
             embed_win = discord.Embed(
-                title="✅ ¡Correcto!",
-                description=f"{msg.author.mention} acertó la respuesta: **{question['answer']}**",
+                title="✅ Correct!",
+                description=f"{msg.author.mention} guessed the answer: **{question['answer']}**",
                 color=discord.Color.green(),
             )
-            embed_win.add_field(name="Puntos ganados", value=f"+{question['points']} pts")
-            embed_win.add_field(name="Puntos totales", value=f"{total} pts")
+            embed_win.add_field(name="Points earned", value=f"+{question['points']} pts")
+            embed_win.add_field(name="Total points", value=f"{total} pts")
             await msg.channel.send(embed=embed_win)
 
         except asyncio.TimeoutError:
             _active_games.pop(interaction.channel_id, None)
             await interaction.channel.send(
-                f"⏰ ¡Se acabó el tiempo! La respuesta era: **{question['answer']}**"
+                f"⏰ Time's up! The answer was: **{question['answer']}**"
             )
 
-    @app_commands.command(name="trivia_top", description="Muestra el ranking de puntos de trivia.")
+    @app_commands.command(name="trivia_top", description="Show the trivia leaderboard.")
     async def trivia_top(self, interaction: discord.Interaction):
         leaderboard = get_leaderboard(interaction.guild_id)
         if not leaderboard:
-            await interaction.response.send_message("📭 Aún no hay puntos registrados en este servidor.")
+            await interaction.response.send_message("📭 No points registered in this server yet.")
             return
 
         medals = ["🥇", "🥈", "🥉"]
         lines = []
         for i, row in enumerate(leaderboard):
             user = interaction.guild.get_member(row["user_id"])
-            name = user.display_name if user else f"Usuario {row['user_id']}"
+            name = user.display_name if user else f"User {row['user_id']}"
             prefix = medals[i] if i < 3 else f"`{i+1}.`"
             lines.append(f"{prefix} **{name}** — {row['points']} pts")
 
         embed = discord.Embed(
-            title="🏆 Ranking de Trivia",
+            title="🏆 Trivia Leaderboard",
             description="\n".join(lines),
             color=discord.Color.gold(),
         )
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="trivia_puntos", description="Muestra tus puntos de trivia en este servidor.")
-    async def trivia_puntos(self, interaction: discord.Interaction, member: discord.Member = None):
+    @app_commands.command(name="trivia_points", description="Show your trivia points in this server.")
+    async def trivia_points(self, interaction: discord.Interaction, member: discord.Member = None):
         target = member or interaction.user
         points = get_user_points(interaction.guild_id, target.id)
-        await interaction.response.send_message(f"🎯 **{target.display_name}** tiene **{points} puntos** de trivia en este servidor.")
+        await interaction.response.send_message(f"🎯 **{target.display_name}** has **{points} trivia points** in this server.")
 
-    @app_commands.command(name="trivia_dificultades", description="Muestra las dificultades disponibles y sus puntos.")
-    async def trivia_dificultades(self, interaction: discord.Interaction):
+    @app_commands.command(name="trivia_difficulties", description="Show available difficulties and their points.")
+    async def trivia_difficulties(self, interaction: discord.Interaction):
         diffs = get_difficulties()
         if not diffs:
-            await interaction.response.send_message("❌ No hay dificultades configuradas.")
+            await interaction.response.send_message("❌ No difficulties configured.")
             return
-        lines = [f"**{d['name']}** → {d['points']} puntos" for d in diffs]
+        lines = [f"**{d['name']}** → {d['points']} points" for d in diffs]
         embed = discord.Embed(
-            title="📊 Dificultades de Trivia",
+            title="📊 Trivia Difficulties",
             description="\n".join(lines),
             color=discord.Color.blurple(),
         )

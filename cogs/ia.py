@@ -17,7 +17,7 @@ class IA(commands.Cog):
     @app_commands.checks.cooldown(1, 10, key=lambda i: (i.guild_id, i.user.id))
     async def ask(self, interaction: discord.Interaction, question: str):
         if len(question) > 300:
-            await interaction.response.send_message("⚠️ Tu mensaje es muy largo. Máximo 300 caracteres.", ephemeral=True)
+            await interaction.response.send_message("⚠️ Your message is too long. Maximum 300 characters.", ephemeral=True)
             return
 
         await interaction.response.defer()
@@ -34,7 +34,7 @@ class IA(commands.Cog):
                 user_id=interaction.user.id
             )
             await interaction.followup.send(
-                "❌ El sistema de IA no está disponible en este momento."
+                "❌ The AI system is currently unavailable."
             )
 
     @app_commands.command(name="reset", description="Clear your conversation memory with the AI.")
